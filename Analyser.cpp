@@ -10,6 +10,11 @@ namespace Analyser
 	void LR_analyser::reduction(int produc_index)
 	{
 		int num=production_set[produc_index].r_part_size;
+
+		//if it is X->. epsilon, the size does not mean the real length
+		if(production_set[produc_index].isWithEPSILON)
+			return;
+
 		for(int i=0;i<num;i++)
 			LR_stack.pop();
 	}
@@ -32,12 +37,18 @@ namespace Analyser
 
 		production_set=LR1PG::produc_set;
 	}
-	void LR_analyser::analyse(const list<LR1PG::element>& elem_stream)
+	void LR_analyser::analyse(const list<LR1PG::element>& e_stream)
 	{
+		list<LR1PG::element> elem_stream=e_stream;
+		//We need to put # at the end of elem_stream.
+		elem_stream.push_back(LR1PG::element(false,ter_list[string("#")]));
+
 		list<LR1PG::element>::const_iterator ptr=elem_stream.begin();
 		int index_GOTO;
 
 		LR_stack.push(stack_block(0,LR1PG::element(false,ter_list.find("#")->second)));
+		
+
 		while(true)
 		{
 		 	LR1PG::action act=LR_table.at(LR_stack.top().state_index,*ptr);
@@ -67,6 +78,8 @@ namespace Analyser
 			switch (act.type)
 			{
 			case LR1PG::action_type::shift:
+				if(act.index==57)
+					cout<<"57"<<endl;
 				shift(act.index,*ptr);
 				ptr++;
 				cout<<act.toString()<<endl;
