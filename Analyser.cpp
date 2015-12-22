@@ -58,11 +58,7 @@ namespace Analyser
 			{
 				list<LR1PG::element>::const_iterator it=ptr;
 				it++;
-				if(it!=elem_stream.end())
-					it++;
-				else
-					act.index=7;
-
+				
 				if((it!=elem_stream.end())&&((it->toString())=="("))
 					act.index=9;
 				else
