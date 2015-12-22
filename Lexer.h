@@ -7,20 +7,20 @@ using namespace std;
 
 namespace Lexer
 {
-	#define ELSE 3
-	#define IF 4
-	#define INT 5
-	#define RETURN 6
-	#define VOID 7
-	#define WHILE 8
-	#define N 9
-	#define FILENAME "a.cpp"
+	//#define ELSE 3
+	//#define IF 4
+	//#define INT 5
+	//#define RETURN 6
+	//#define VOID 7
+	//#define WHILE 8
+	#define RESERVELISTSIZE 9
+	
 
 	extern char ch;
 	extern string code;
 	extern int ptr;
 	extern string strToken;
-	extern string reserveList[N];
+	extern string reserveList[RESERVELISTSIZE];
 	extern FILE* fp;
 	extern int index;
 	extern int value;
@@ -28,7 +28,6 @@ namespace Lexer
 
 	
 
-	bool loadFile(char* fileName);
 	void GetChar();
 	void GetBC();
 	void Concat();
@@ -40,7 +39,7 @@ namespace Lexer
 	string InsertConst();
 	void detectOneWord();
 	bool deleteNote();//È¥µô×¢ÊÍ
-	void load_and_process();
+	void load_code(const string& file_name);
 
 
 }

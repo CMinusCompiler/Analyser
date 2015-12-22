@@ -6,7 +6,7 @@ namespace Lexer
 	string code;
 	int ptr=0;
 	string strToken;
-	string reserveList[N]={"","","","else","if","int","return","void","while"};//保留字表
+	string reserveList[RESERVELISTSIZE]={"","","","else","if","int","return","void","while"};//保留字表
 	FILE* fp;
 	int index;
 	int value;
@@ -15,19 +15,7 @@ namespace Lexer
 
 
 	
-	bool loadFile(char* fileName)
-	{
-		FILE* fp;
-		char c;
-		fp=fopen(FILENAME,"r");
-		if(!fp)
-			return false;
-		while((c=fgetc(fp))!=EOF)
-		{
-			code.push_back(c);
-		}
-		return true;
-	}
+	
 	void GetChar()
 	{
 		if(code.at(ptr)=='\0')
@@ -61,7 +49,7 @@ namespace Lexer
 	}
 	int Reserve()
 	{//对strToken中的字符串查找保留字表，若它是保留字则返回种别编码，否则返回0；
-		for(int i=0;i<N;i++)
+		for(int i=0;i<RESERVELISTSIZE;i++)
 		{
 			if(strToken.compare(reserveList[i])==0)
 			  return i;
@@ -274,13 +262,23 @@ namespace Lexer
 		
 		}
 	}
-	void load_and_process()
+	void load_code(const string& file_name)
 	{
-		if(!loadFile(FILENAME))
+
+		FILE* fp;
+		char c;
+		fp=fopen(file_name.c_str(),"r");
+		if(!fp)
 		{
 			cout<<"Error in loading."<<endl;
 			return;
 		}
+		while((c=fgetc(fp))!=EOF)
+		{
+			code.push_back(c);
+		}
+		
+
 		if(!deleteNote())
 		{
 			cout<<"Error in deletint note."<<endl;
