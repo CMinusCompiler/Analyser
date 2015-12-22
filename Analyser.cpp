@@ -35,13 +35,33 @@ namespace Analyser
 	void LR_analyser::analyse(const list<LR1PG::element>& elem_stream)
 	{
 		list<LR1PG::element>::const_iterator ptr=elem_stream.begin();
-
+		int index_GOTO;
 
 		LR_stack.push(stack_block(0,LR1PG::element(false,ter_list.find("#")->second)));
 		while(true)
 		{
 		 	LR1PG::action act=LR_table.at(LR_stack.top().state_index,*ptr);
 			
+			//$$
+			if((LR_stack.top().state_index==8)&&(ptr->toString()=="ID"))
+			{
+				list<LR1PG::element>::const_iterator it=ptr;
+				it++;
+				if(it!=elem_stream.end())
+					it++;
+				else
+					act.index=7;
+
+				if((it!=elem_stream.end())&&((it->toString())=="("))
+					act.index=9;
+				else
+					act.index=7;
+
+				
+
+			}
+			//$$
+
 			bool loop_swch=false;
 
 			switch (act.type)
@@ -49,10 +69,14 @@ namespace Analyser
 			case LR1PG::action_type::shift:
 				shift(act.index,*ptr);
 				ptr++;
+				cout<<act.toString()<<endl;
 				break;
 			case LR1PG::action_type::reduction:
 				reduction(act.index);
-				shift(LR_stack.top().state_index,production_set[act.index].l_part);
+				index_GOTO=LR_table.at(LR_stack.top().state_index,production_set[act.index].l_part).index;
+				shift(index_GOTO,production_set[act.index].l_part);
+				cout<<act.toString()<<endl;
+				cout<<LR1PG::action(LR1PG::action_type::shift,index_GOTO).toString()<<endl;
 				break;
 			case LR1PG::action_type::accept:
 				cout<<"Accept!"<<endl;

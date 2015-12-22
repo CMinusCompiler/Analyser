@@ -1,5 +1,7 @@
 #include "Lexer.h"
 
+
+
 namespace Lexer
 {
 	char ch;
@@ -13,7 +15,7 @@ namespace Lexer
 
 	list<string> token_stream;
 
-
+	
 	
 	
 	void GetChar()
