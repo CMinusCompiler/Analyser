@@ -161,113 +161,106 @@ namespace LR1PG
 		}
 
 	}
-	vector<string>  FIRST::find(vector<string>& beta_a)
-	   { //求first(beita a),其中beita=（V|T）*，a属于T
-		//返回first集，vector中string均属于T
-		vector<string> first;
-		set<element>::iterator it;
-		vector<production>::iterator pro_it;
-		bool epsilon=false;
-		bool exist=false;
-		for(int i=0;i<beta_a.size();i++)
-		{
-			exist=false;
-			if(ter_list.find(beta_a[i])==ter_list.end())//beta_a[i]是变元
-			{		
-				for(it=first_sets.find(beta_a[i]).begin();it!=first_sets.find(beta_a[i]).end();it++)
-					if(it->toString().compare(EPSILON)!=0)
-					{
-						for(int j=0;j<first.size();j++)
-							if(first[j].compare(it->toString())==0)
-							{//已存在，不需加入
-								exist=true;
-								break;
-							}
-						if(!exist)
-						   first.push_back(it->toString());//将beta_a[i]的first集加入,不加入空,不重复加入
-					}
-				for(pro_it=produc_set.begin();pro_it<produc_set.end();pro_it++)
-				{//遍历产生式集合，看beta_a[i]是否能产生空
-					if(pro_it->l_part.toString().compare(beta_a[i])==0)//找到beta_a[i]的产生式
-					   if(pro_it->isWithEPSILON)
-					   {
-						   epsilon=true;
-						   break;
-					   }
-				}
-				if(!epsilon)//beta_a[i]不含空产生式
-					break;
-			}
-			else//beta_a[i]是终结符，加入first集，注意#也是终结符
-			{
-				for(int j=0;j<first.size();j++)
-					if(first[j].compare(beta_a[i])==0)
-					{//已存在，不需加入
-						exist=true;
-						break;
-					}
-				if(!exist)
-					first.push_back(beta_a[i]);
-				break;
-			}
-		}
-		return first;
-		}
-	set< element>  FIRST::find(vector<element>& beta_a)
-	{ //求first(beita a),其中beita=（V|T）*，a属于T
-	//返回first集
-		set<element> first;
-		set<element>::iterator it;
-		vector<production>::iterator pro_it;
-		bool epsilon=false;
-		bool exist=false;
-		for(int i=0;i<beta_a.size();i++)
-		{
-			exist=false;
-			if(ter_list.find(beta_a[i].toString())==ter_list.end())//beta_a[i]是变元
-			{		
-
-				set<element> elem_set=first_sets.find(beta_a[i].toString());
-				it=elem_set.begin();
-
-				for(;it!=elem_set.end();it++)
-					if(it->toString().compare(EPSILON)!=0)
-					{
-					
-						if(first.find(element(false,ter_list.find(it->toString())->second))!=first.end())
+	vector<string> find(vector<string>& beta_a)
+   { //求first(beita a),其中beita=（V|T）*，a属于T
+    //返回first集，vector中string均属于T
+	vector<string> first;
+	set<element>::iterator it;
+	vector<production>::iterator pro_it;
+	bool epsilon=false;
+	for(int i=0;i<beta_a.size();i++)
+	{
+		if(ter_list.find(beta_a[i])==ter_list.end())//beta_a[i]是变元
+		{		
+			for(it=first_sets.find(beta_a[i]).begin();it!=first_sets.find(beta_a[i]).end();it++)
+				if(it->toString().compare(EPSILON)!=0)
+				{
+					for(int j=0;j<first.size();j++)
+						if(first[j].compare(it->toString())==0)
 						{//已存在，不需加入
-							exist=true;
-							break;
+							continue;
 						}
-						if(!exist)
-							first.insert(element(false,ter_list.find(it->toString())->second));//将beta_a[i]的first集加入,不加入空,不重复加入
-					}
-				for(pro_it=produc_set.begin();pro_it<produc_set.end();pro_it++)
-				{//遍历产生式集合，看beta_a[i]是否能产生空
-					if(pro_it->l_part.toString().compare(beta_a[i].toString())==0)//找到beta_a[i]的产生式
-						if(pro_it->isWithEPSILON)
-						{
-							epsilon=true;
-							break;
-						}
+						else
+			               first.push_back(it->toString());//将beta_a[i]的first集加入,不加入空,不重复加入
 				}
-				if(!epsilon)//beta_a[i]不含空产生式
-					break;
+			for(pro_it=produc_set.begin();pro_it<produc_set.end();pro_it++)
+			{//遍历产生式集合，看beta_a[i]是否能产生空
+				if(pro_it->l_part.toString().compare(beta_a[i])==0)//找到beta_a[i]的产生式
+				   if(pro_it->isWithEPSILON)
+				   {
+					   epsilon=true;
+					   break;
+				   }
 			}
-			else//beta_a[i]是终结符，加入first集，注意#也是终结符
-			{
-				if(first.find(element(false,beta_a[i].index))!=first.end())
+			if(!epsilon)//beta_a[i]不含空产生式
+				break;
+		}
+		else//beta_a[i]是终结符，加入first集，注意#也是终结符
+		{
+			for(int j=0;j<first.size();j++)
+				if(first[j].compare(beta_a[i])==0)
 				{//已存在，不需加入
-					exist=true;
+					
 					break;
 				}
-				if(!exist)
-					first.insert(element(false,beta_a[i].index));
+				else
+				{
+					first.push_back(beta_a[i]);
+					break;
+				}
+		}
+	}
+	return first;
+    }
+    set<element> find(vector<element>& beta_a)
+   { //求first(beita a),其中beita=（V|T）*，a属于T
+    //返回first集
+	set<element> first;
+	set<element>::iterator it;
+	vector<production>::iterator pro_it;
+	bool epsilon=false;
+	for(int i=0;i<beta_a.size();i++)
+	{
+		if(ter_list.find(beta_a[i].toString())==ter_list.end())//beta_a[i]是变元
+		{		
+			for(it=first_sets.find(beta_a[i].toString()).begin();it!=first_sets.find(beta_a[i].toString()).end();it++)
+				if(it->toString().compare(EPSILON)!=0)
+				{
+					
+					if(first.find(element(false,ter_list.find(it->toString())->second))!=first.end())
+					{//已存在，不需加入
+						continue;
+					}
+					else
+			           first.insert(element(false,ter_list.find(it->toString())->second));//将beta_a[i]的first集加入,不加入空,不重复加入
+				}
+			for(pro_it=produc_set.begin();pro_it<produc_set.end();pro_it++)
+			{//遍历产生式集合，看beta_a[i]是否能产生空
+				if(pro_it->l_part.toString().compare(beta_a[i].toString())==0)//找到beta_a[i]的产生式
+				   if(pro_it->isWithEPSILON)
+				   {
+					   epsilon=true;
+					   break;
+				   }
+			}
+			if(!epsilon)//beta_a[i]不含空产生式
+				break;
+		}
+		else//beta_a[i]是终结符，加入first集，注意#也是终结符
+		{
+			if(first.find(element(false,beta_a[i].index))!=first.end())
+			{//已存在，不需加入
 				break;
 			}
+			else
+			{
+				first.insert(element(false,beta_a[i].index));
+			    break;
+			}
 		}
-		return first;
 	}
+	return first;
+    }
 	void  FIRST::print()
 	{
 		set<element>::iterator set_it;
@@ -295,6 +288,10 @@ namespace LR1PG
 	}
 	element  flex_production::get_r_element()
 	{
+		//If it is X->. epsilon, return a null element
+		if((production::r_part[0].toString())==string(EPSILON))
+			return element();
+		
 		//If the dot is at the rightest side, return a null element.
 		if(ptr_pos==production::r_part_size-1)
 		{
@@ -304,6 +301,7 @@ namespace LR1PG
 			return production::r_part[ptr_pos+1];
 
 	}
+
 
 	
 	bool  flex_production::operator<(const flex_production& produc)const
@@ -349,7 +347,9 @@ namespace LR1PG
 	{
 		LR_item item=LR_item(*this);
 
-		
+		//if it is X->. epsilon, stop the dot from moving
+		if((production::r_part[0].toString())==string(EPSILON))
+			return item;
 
 		if(ptr_pos==production::r_part_size-1)
 			return item;
@@ -359,6 +359,7 @@ namespace LR1PG
 			return item;
 		}
 	}
+
 	bool  LR_item::operator<(const LR_item& produc)const
 	{
 		string str1=this->toString();
