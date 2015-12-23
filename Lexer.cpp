@@ -23,6 +23,7 @@ namespace Lexer
 		if(code.at(ptr)=='\0')
 		{
 			printf("Error in GetChar(): ptr pointing at the end");
+			return;
 		}
 		ch=code.at(ptr);
 		ptr++;
@@ -82,6 +83,10 @@ namespace Lexer
 		GetChar();
 		
 		GetBC();
+
+		if(!(ptr<code.length()))
+			return;
+
 		if(IsLetter())
 		{
 			while(IsLetter())
@@ -240,8 +245,8 @@ namespace Lexer
 		else if(ch==' ') ;//末尾空格的处理：忽视
 		else 
 		{
-			//cout<<"error"<<endl;
-			token_stream.push_back(string("ERROR"));
+			cout<<"error"<<endl;
+			//token_stream.push_back(string("ERROR"));
 		}
 	}
 	bool deleteNote()

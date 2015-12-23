@@ -7,7 +7,7 @@ namespace Analyser
 {
 	class LR_analyser
 	{
-	private:
+	protected:
 		class stack_block
 		{
 		public:
@@ -38,7 +38,7 @@ namespace Analyser
 	public:
 		void static load_productions(const string& file_name);
 		void static load_table(const string& file_name);
-		static void analyse(const list<LR1PG::element>& elem_stream);
+		static void analyse(const list<LR1PG::element>& e_stream);
 
 
 	};
