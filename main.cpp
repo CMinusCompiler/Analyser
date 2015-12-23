@@ -104,7 +104,7 @@ void main()
 	*/
 
 	CM_analyser::load_productions(string("wenfa_if.txt"));
-	CM_analyser::load_table(string("TABLE_if.txt"));
+	CM_analyser::load_table(string("TABLE_if"));
 	CM_analyser::analyse(elem_stream);
 
 

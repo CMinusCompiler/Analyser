@@ -7,15 +7,16 @@
 #include<set>
 #include<list>
 #include<queue>
+#include<cstdio>
+
 using namespace std;
 
+
+#define EPSILON "¦Å"
 
 
 namespace LR1PG
 {
-
-	#define EPSILON "¦Å"
-
 	class element
 	{
 	public:
@@ -81,7 +82,7 @@ namespace LR1PG
 	};
 	class FIRST
 	{
-	public:
+	private:
 		map<string,int> FIRST_map;
 		vector<set<element> > FIRST_sets;
 		int i_pointer;
@@ -94,9 +95,11 @@ namespace LR1PG
 		//Return: successful or not
 		bool insert(const string& x,const element& elem);
 		set<element> find(string x);
+		set<element> find(const element& x);
+
 		//$$
-		vector<string> find(vector<string>& beta_a);
-		set<element> find(vector<element>& beta_a);
+		
+		set<element> find(const vector<element>& beta_a);
 		//$$
 		void print();
 	};
@@ -239,6 +242,7 @@ namespace LR1PG
 			this->num_of_lines=LR_table.num_of_lines;
 		}
 		void save(const string& file_name);
+
 	private:	
 		map<int,map<element,action>> table;
 		
@@ -255,13 +259,13 @@ namespace LR1PG
 	void init_first_sets(map<string,int>& var_list);
 	
 
-	extern map<string,int> var_list;
-	extern map<string,int> ter_list;
-	extern map<int,string> re_var_list;
-	extern map<int,string> re_ter_list;
+	extern map<string,int> var_list;//¡À???¡À¨ª
+	extern map<string,int> ter_list;//???¨¢¡¤?¡À¨ª
+	extern map<int,string> re_var_list;//¡À???¡À¨ª
+	extern map<int,string> re_ter_list;//???¨¢¡¤?¡À¨ª
 	extern FIRST first_sets;
 	extern LR_analysis_table LR_table;
-	extern vector<production> produc_set;
+	extern vector<production> produc_set;//?¨²?¨²??????
 	extern map<production,int> produc_index_map;
 	extern set<LR_item_closure> set_C;
 
