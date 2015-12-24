@@ -161,109 +161,35 @@ namespace LR1PG
 		}
 
 	}
-	vector<string>  FIRST::find(vector<string>& beta_a)
-	   { //求first(beita a),其中beita=（V|T）*，a属于T
-		//返回first集，vector中string均属于T
-		vector<string> first;
-		set<element>::iterator it;
-		vector<production>::iterator pro_it;
-		bool epsilon=false;
-		for(int i=0;i<beta_a.size();i++)
-		{
-			if(ter_list.find(beta_a[i])==ter_list.end())//beta_a[i]是变元
-			{		
-				for(it=first_sets.find(beta_a[i]).begin();it!=first_sets.find(beta_a[i]).end();it++)
-					if(it->toString().compare(EPSILON)!=0)
-					{
-						for(int j=0;j<first.size();j++)
-							if(first[j].compare(it->toString())==0)
-							{//已存在，不需加入
-								continue;
-							}
-							else
-						       first.push_back(it->toString());//将beta_a[i]的first集加入,不加入空,不重复加入
-					}
-				for(pro_it=produc_set.begin();pro_it<produc_set.end();pro_it++)
-				{//遍历产生式集合，看beta_a[i]是否能产生空
-					if(pro_it->l_part.toString().compare(beta_a[i])==0)//找到beta_a[i]的产生式
-					   if(pro_it->isWithEPSILON)
-					   {
-						   epsilon=true;
-						   break;
-					   }
-				}
-				if(!epsilon)//beta_a[i]不含空产生式
-					break;
-			}
-			else//beta_a[i]是终结符，加入first集，注意#也是终结符
-			{
-				for(int j=0;j<first.size();j++)
-					if(first[j].compare(beta_a[i])==0)
-					{//已存在，不需加入
-						break;
-					}
-					else
-					{
-						first.push_back(beta_a[i]);
-						break;
-					}
-			}
-		}
-		return first;
-		}
 	set< element>  FIRST::find(vector<element>& beta_a)
 	{ //求first(beita a),其中beita=（V|T）*，a属于T
 	//返回first集
+		queue<element> que;
 		set<element> first;
 		set<element>::iterator it;
-		vector<production>::iterator pro_it;
-		bool epsilon=false;
-		for(int i=0;i<beta_a.size();i++)
+		int i=0;
+		element epsion_element(0,ter_list.find(EPSILON)->second);
+		que.push(beta_a[0]);
+		while(!que.empty())
 		{
-			if(ter_list.find(beta_a[i].toString())==ter_list.end())//beta_a[i]是变元
-			{		
-
-				set<element> elem_set=first_sets.find(beta_a[i].toString());
-				it=elem_set.begin();
-
-				for(;it!=elem_set.end();it++)
-					if(it->toString().compare(EPSILON)!=0)
-					{
-					
-						if(first.find(element(false,ter_list.find(it->toString())->second))!=first.end())
-						{//已存在，不需加入
-							continue;
-						}
-						else
-							first.insert(element(false,ter_list.find(it->toString())->second));//将beta_a[i]的first集加入,不加入空,不重复加入
-					}
-				for(pro_it=produc_set.begin();pro_it<produc_set.end();pro_it++)
-				{//遍历产生式集合，看beta_a[i]是否能产生空
-					if(pro_it->l_part.toString().compare(beta_a[i].toString())==0)//找到beta_a[i]的产生式
-						if(pro_it->isWithEPSILON)
-						{
-							epsilon=true;
-							break;
-						}
-				}
-				if(!epsilon)//beta_a[i]不含空产生式
-					break;
-			}
-			else//beta_a[i]是终结符，加入first集，注意#也是终结符
+			set<element> elem_set=first_sets.find(que.front().toString());	
+			for(it=elem_set.begin();it!=elem_set.end();it++)
 			{
-				if(first.find(element(false,beta_a[i].index))!=first.end())
-				{//已存在，不需加入
-					
-					break;
-				}
-				else
+				if(it->toString().compare(EPSILON)!=0)//isn't epsion
 				{
-					first.insert(element(false,beta_a[i].index));
-				    break;
+					if(first.find(*it)==first.end())//isn't exist
+					   first.insert(*it);//将beta_a[i]的first集加入,不加入空,不重复加入
+				}
+				else//has epsiilon,next push
+				{
+					i++;
+				    que.push(beta_a[i]);
 				}
 			}
+
+			que.pop();
 		}
-		return first;
+	    return first;
 	}
 	void  FIRST::print()
 	{
