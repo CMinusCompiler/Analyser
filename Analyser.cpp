@@ -7,7 +7,7 @@ namespace Analyser
 	
 	
 	
-	APT_node APT::root;
+	APT_node& APT::root=APT_node();
 	stack<APT_node> APT::constru_stack;
 
 	vector<value (*)(const value& v)> ex_production::attri_grams;
@@ -150,13 +150,13 @@ namespace Analyser
 		offset_pos+=size;
 	}
 
-	void LR_analyser::shift(int state_index,const ex_element& elem)
+	void LR_analyser::shift(int state_index,const APT_node& node)
 	{
-		LR_stack.push(stack_block(state_index,elem));	
+		LR_stack.push(stack_block(state_index,node));	
 
 		//APT::constru_stack.push(APT_node(elem));
 	}
-	value LR_analyser::reduction(int produc_index)
+	value LR_analyser::reduction(int produc_index,APT_node& father)
 	{
 		int num=production_set[produc_index].r_part_size;
 
@@ -199,12 +199,18 @@ namespace Analyser
 		list<Analyser::ex_element>::const_iterator ptr=elem_stream.begin();
 		int index_GOTO;
 
+		
 		{
+			//it is a leaf node
 			Analyser::ex_element elem(false,ter_list[string("#")],Analyser::value());
-			LR_stack.push(stack_block(0,elem));
+
+			stack_block block=stack_block(0,elem);
+			LR_stack.push(block);
+
+			//Analyser::APT::constru_stack.push(Analyser::APT_node(elem));
 		}
 		
-
+		
 
 		while(true)
 		{
@@ -234,6 +240,7 @@ namespace Analyser
 			{
 			case LR1PG::action_type::shift:
 				{
+				//nodes shifted directly are leaf nodes
 					shift(act.index,*ptr);
 					ptr++;
 					cout<<act.toString()<<endl;
@@ -241,16 +248,21 @@ namespace Analyser
 				}
 			case LR1PG::action_type::reduction:
 				{
-					//$$
-				
-					//$$
-					Analyser::value val=reduction(act.index);
+					//Analyser::APT_node& father_node=*(new Analyser::APT_node());
+					Analyser::APT_node father_node;
+
+					Analyser::value val=reduction(act.index,father_node);
 					index_GOTO=LR_table.at(LR_stack.top().state_index,production_set[act.index].l_part).index;
 
 					
 					Analyser::ex_element elem(true,production_set[act.index].l_part.index,val);
 
-					shift(index_GOTO,elem);
+					father_node=elem;
+
+					shift(index_GOTO,father_node);
+
+					Analyser::APT::root=father_node;
+
 					cout<<act.toString()<<endl;
 					cout<<LR1PG::action(LR1PG::action_type::shift,index_GOTO).toString()<<endl;
 					break;
@@ -272,7 +284,10 @@ namespace Analyser
 			if(loop_swch)
 				break;
 		}
-	
+		
+		Analyser::APT::root=*(new Analyser::APT_node(Analyser::APT::root));
+
+
 	}
 	void LR_analyser::load_table(const string& file_name)
 	{

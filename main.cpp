@@ -47,7 +47,7 @@ namespace CM_attri_gram_set
 class CM_analyser:public Analyser::LR_analyser
 {
 public:
-	static Analyser::value reduction(int produc_index)
+	static Analyser::value reduction(int produc_index,Analyser::APT_node& father)
 	{
 		
 		vector<Analyser::ex_element> ex_elem_container;
@@ -58,11 +58,15 @@ public:
 		if(production_set[produc_index].isWithEPSILON)
 			return	Analyser::value();
 
+
 		for(int i=0;i<num;i++)
 		{
 			ex_elem_container.push_back(LR_stack.top());
+			father.children.push_back(LR_stack.top());
 			LR_stack.pop();
 		}
+
+
 
 		Analyser::value val;
 		{
@@ -96,14 +100,18 @@ public:
 		list<Analyser::ex_element>::const_iterator ptr=elem_stream.begin();
 		int index_GOTO;
 
+		
 		{
+			//it is a leaf node
 			Analyser::ex_element elem(false,ter_list[string("#")],Analyser::value());
-			LR_stack.push(stack_block(0,elem));
+
+			stack_block block=stack_block(0,elem);
+			LR_stack.push(block);
 
 			//Analyser::APT::constru_stack.push(Analyser::APT_node(elem));
 		}
 		
-
+		
 
 		while(true)
 		{
@@ -133,6 +141,7 @@ public:
 			{
 			case LR1PG::action_type::shift:
 				{
+				//nodes shifted directly are leaf nodes
 					shift(act.index,*ptr);
 					ptr++;
 					cout<<act.toString()<<endl;
@@ -140,16 +149,21 @@ public:
 				}
 			case LR1PG::action_type::reduction:
 				{
-					//$$
-				
-					//$$
-					Analyser::value val=reduction(act.index);
+					//Analyser::APT_node& father_node=*(new Analyser::APT_node());
+					Analyser::APT_node father_node;
+
+					Analyser::value val=reduction(act.index,father_node);
 					index_GOTO=LR_table.at(LR_stack.top().state_index,production_set[act.index].l_part).index;
 
 					
 					Analyser::ex_element elem(true,production_set[act.index].l_part.index,val);
 
-					shift(index_GOTO,elem);
+					father_node=elem;
+
+					shift(index_GOTO,father_node);
+
+					Analyser::APT::root=father_node;
+
 					cout<<act.toString()<<endl;
 					cout<<LR1PG::action(LR1PG::action_type::shift,index_GOTO).toString()<<endl;
 					break;
@@ -171,7 +185,10 @@ public:
 			if(loop_swch)
 				break;
 		}
-	
+		
+		Analyser::APT::root=*(new Analyser::APT_node(Analyser::APT::root));
+
+
 	}
 };
 

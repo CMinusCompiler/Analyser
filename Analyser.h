@@ -78,7 +78,7 @@ namespace Analyser
 	class APT
 	{
 	public:
-		static APT_node root;
+		static APT_node& root;
 		static stack<APT_node> constru_stack;
 		static void print();
 	};
@@ -159,16 +159,16 @@ namespace Analyser
 	class LR_analyser
 	{
 	protected:
-		class stack_block:public ex_element
+		class stack_block:public APT_node
 		{
 		public:
 			int state_index;
 			
-			stack_block(int index,ex_element e):ex_element(e)
+			stack_block(int index,const APT_node& e):APT_node(e)
 			{
 				state_index=index;
 			}
-			stack_block(const stack_block& block):ex_element(block)
+			stack_block(const stack_block& block):APT_node(block)
 			{
 				this->state_index=block.state_index;
 			}
@@ -181,8 +181,8 @@ namespace Analyser
 
 	
 		static stack<stack_block> LR_stack;
-		static void shift(int state_index,const ex_element& elem);
-		static value reduction(int produc_index);
+		static void shift(int state_index,const APT_node& node);
+		static value reduction(int produc_index,APT_node& father);
 
 	public:
 		void static load_productions(const string& file_name);
