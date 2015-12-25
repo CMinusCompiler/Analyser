@@ -358,6 +358,7 @@ namespace LR1PG
 	}
 	bool  LR_item_closure::operator<(const LR_item_closure& closure)const
 	{
+		/*
 		if(this->size!=closure.size)
 			return this->size<closure.size;
 		
@@ -369,7 +370,16 @@ namespace LR1PG
 				return (*it)<(*(closure.closure_instance.begin()));
 			
 		}
-		return false;
+		return false;*/
+		string str1;
+		string str2;
+		set<LR_item>::iterator it;
+		for(it=this->closure_instance.begin();it!=closure_instance.end();it++)
+			str1+=it->toString();
+		for(it=closure.closure_instance.begin();it!=closure.closure_instance.end();it++)
+			str2+=it->toString();
+		return str1<str2;
+
 	}
 	void  LR_item_closure::closure_completion()
 	{//  closure_instance=CLOSURE£¨closure_instance£©

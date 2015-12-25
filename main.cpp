@@ -3,6 +3,44 @@
 #include "Analyser.h"
 #include <stack>
 
+class CM_attri_gram_set:public Analyser::attri_gram_set
+{
+public:
+		Analyser::value ag20(const Analyser::value& v)
+		{
+		//ag20: declar_local ¡ú declar_local declar_var
+			string ID=v.getStrValue(1,0);
+
+			int width=v.getIntValue(1,0);
+			Analyser::symbol_table.var_map[ID]=Analyser::nesting_table::get_offset();
+			Analyser::nesting_table::incre_offset(width);
+
+			//it does not need to return value
+			return Analyser::value();
+		}
+		Analyser::value ag5(const Analyser::value& v)
+		{
+		//ag5: declar_var ¡ú type_var ID ;
+			Analyser::value val;
+			
+			//ID.width=1
+			val.setIntValue(0,0,v.getIntValue(1,0));
+			val.setStrValue(0,0,v.getStrValue(1,0));
+			return val;
+		}
+		Analyser::value ag6(const Analyser::value& v)
+		{
+		//ag6: declar_var ¡ú type_var ID [ NUM ] ;
+
+			Analyser::value val;
+			
+			//ID.width=ID.width*NUM.val
+			val.setIntValue(0,0,(v.getIntValue(1,0))*(v.getIntValue(3,0)));
+			val.setStrValue(0,0,v.getStrValue(1,0));
+			return val;
+		}
+
+}ag_set;
 
 class CM_analyser:public Analyser::LR_analyser
 {
@@ -74,16 +112,51 @@ public:
 		}
 	
 	}
+	static void reduction(int produc_index)
+	{
+		//$$
+		switch (produc_index)
+		{
+		case 0:break;
+		case 20:
+			{
+				//string ID;
+				//Analyser::symbol_table.var_map[ID]=Analyser::nesting_table::get_offset();
+				//Analyser::nesting_table::incre_offset();
+			}
+			break;
+		default:break;
+		}
+		//$$
+
+		int num=production_set[produc_index].r_part_size;
+
+		//if it is X->. epsilon, the size does not mean the real length
+		if(production_set[produc_index].isWithEPSILON)
+			return;
+
+		for(int i=0;i<num;i++)
+			LR_stack.pop();
+	}
+
 };
 
 void main()
 {
 	
 	
+
 	
 	//to get var_list, ter_list, produc_set and set_C:
 	LR1PG::load_productions(string("wenfa_if.txt"));
 	
+	for(int i=0;i<LR1PG::produc_set.size();i++)
+	{
+//		Analyser::ex_production((LR1PG::produc_set)[i]);
+
+	
+	}
+
 	//to get token_stream:
 	Lexer::load_code(string("if.cpp"));
 	

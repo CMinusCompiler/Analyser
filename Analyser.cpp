@@ -3,6 +3,114 @@
 namespace Analyser
 {
 	
+	
+	
+	
+	
+	APT_node APT::root;
+	stack<APT_node> APT::constru_stack;
+
+	vector<value (*)(const value& v)> ex_production::attri_grams;
+	
+	int ex_production::vecotr_ptr=0;
+	
+	nesting_table symbol_table;
+	vector<int> nesting_table::memory_area;
+	int nesting_table::offset_pos=0;
+	stack<nesting_table* > nesting_table::nestptr_stack;
+
+	vector<ex_production> ex_produc_set;
+
+
+	void value::setIntValue(int elem_index,int val_index,int value)
+	{
+		if(!(elem_index<int_val_array.size()))
+		{
+			int d=elem_index-int_val_array.size()+1;
+			for(int i=0;i<d;i++)
+				int_val_array.push_back(vector<int>());
+		}
+		if(!(val_index<int_val_array[elem_index].size()))
+		{
+			int d=val_index-int_val_array[elem_index].size()+1;
+			for(int i=0;i<d;i++)
+				(int_val_array[elem_index]).push_back(int());
+		}
+
+		(int_val_array[elem_index])[val_index]=value;
+
+	}
+	void value::setStrValue(int elem_index,int val_index,string str)
+	{
+		if(!(elem_index<int_val_array.size()))
+		{
+			int d=elem_index-int_val_array.size()+1;
+			for(int i=0;i<d;i++)
+				str_val_array.push_back(vector<string>());
+		}
+		if(!(val_index<int_val_array[elem_index].size()))
+		{
+			int d=val_index-int_val_array[elem_index].size()+1;
+			for(int i=0;i<d;i++)
+				(str_val_array[elem_index]).push_back(string());
+		}
+
+		(str_val_array[elem_index])[val_index]=str;
+	}
+	int value::getIntValue(int elem_index,int val_index)const 
+	{
+		if(!(elem_index<int_val_array.size()))
+		{
+			cout<<"Exceeded limit of the array."<<endl;
+			return int();
+		}
+		if(!(val_index<int_val_array[elem_index].size()))
+		{
+			cout<<"Exceeded limit of the array."<<endl;
+			return int();
+		}
+
+		return (int_val_array[elem_index])[val_index];
+	}
+	string value::getStrValue(int elem_index,int val_index)const 
+	{
+		if(!(elem_index<str_val_array.size()))
+		{
+			cout<<"Exceeded limit of the array."<<endl;
+			return int();
+		}
+		if(!(val_index<str_val_array[elem_index].size()))
+		{
+			cout<<"Exceeded limit of the array."<<endl;
+			return int();
+		}
+
+		return (str_val_array[elem_index])[val_index];
+	}
+
+
+
+	void nesting_table::stack_push(nesting_table* ptr)
+	{
+		nestptr_stack.push(ptr);
+	}
+	void nesting_table::stack_pop()
+	{
+		nestptr_stack.pop();
+	}
+	nesting_table* nesting_table::stack_top()
+	{
+		return nestptr_stack.top();
+	}
+	int nesting_table::get_offset()
+	{
+		return offset_pos;
+	}
+	void nesting_table::incre_offset(int size)
+	{
+		offset_pos+=size;
+	}
+
 	void LR_analyser::shift(int state_index,const LR1PG::element& elem)
 	{
 		LR_stack.push(stack_block(state_index,elem));	
