@@ -4,13 +4,14 @@ declar_list¡údeclar
 declar¡údeclar_var
 declar¡údeclar_func
 declar_var¡útype_var ID ;
-declar_var¡útype ID [ NUM ] ;
+declar_var¡útype_var ID [ NUM ] ;
 type_var¡úint
 declar_func¡útype_func ID ( params ) compou_body
 type_func¡úint
 type_func¡úvoid
 params¡úparam_list
 params¡úvoid
+params¡ú¦Å
 param_list¡úparam_list , param
 param_list¡úparam
 param¡útype_var ID
@@ -28,8 +29,8 @@ lines¡úlines_return
 lines¡úcompou_body
 lines_asg¡úexpre ;
 lines_asg¡ú;
-lines¡úif ( expre ) lines
-lines¡úif ( expre ) lines else lines
+lines_select¡úif ( expre ) lines
+lines_select¡úif ( expre ) lines else lines
 lines_loop¡úwhile ( expre ) lines
 lines_return¡úreturn ;
 lines_return¡úreturn expre ;

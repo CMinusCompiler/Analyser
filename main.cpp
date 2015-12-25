@@ -72,10 +72,10 @@ public:
 				else
 					act.index=7;
 			}
-			if(LR_stack.top().state_index==40)
+			if(LR_stack.top().state_index==301 && (ptr->toString()=="else"))
 			{
 				act.type=LR1PG::action_type::shift;
-				act.index=41;
+				act.index=307;
 			}
 			//$$
 
@@ -112,34 +112,8 @@ public:
 		}
 	
 	}
-	static void reduction(int produc_index)
-	{
-		//$$
-		switch (produc_index)
-		{
-		case 0:break;
-		case 20:
-			{
-				//string ID;
-				//Analyser::symbol_table.var_map[ID]=Analyser::nesting_table::get_offset();
-				//Analyser::nesting_table::incre_offset();
-			}
-			break;
-		default:break;
-		}
-		//$$
-
-		int num=production_set[produc_index].r_part_size;
-
-		//if it is X->. epsilon, the size does not mean the real length
-		if(production_set[produc_index].isWithEPSILON)
-			return;
-
-		for(int i=0;i<num;i++)
-			LR_stack.pop();
-	}
-
 };
+
 
 void main()
 {
@@ -148,7 +122,7 @@ void main()
 
 	
 	//to get var_list, ter_list, produc_set and set_C:
-	LR1PG::load_productions(string("wenfa_if.txt"));
+	LR1PG::load_productions(string("wenfa.txt"));
 	
 	for(int i=0;i<LR1PG::produc_set.size();i++)
 	{
@@ -158,7 +132,7 @@ void main()
 	}
 
 	//to get token_stream:
-	Lexer::load_code(string("if.cpp"));
+	Lexer::load_code(string("b.cpp"));
 	
 	//token_stream to elem_stream:
 	list<LR1PG::element> elem_stream;
@@ -176,8 +150,8 @@ void main()
 	Analyser::LR_analyser::analyse(elem_stream);
 	*/
 
-	CM_analyser::load_productions(string("wenfa_if.txt"));
-	CM_analyser::load_table(string("TABLE_if"));
+	CM_analyser::load_productions(string("wenfa.txt"));
+	CM_analyser::load_table(string("TABLE.txt"));
 	CM_analyser::analyse(elem_stream);
 
 
