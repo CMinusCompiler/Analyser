@@ -3,6 +3,7 @@
 #include<iostream>
 #include<string>
 #include<list>
+#include"Analyser.h"
 using namespace std;
 
 namespace Lexer
@@ -16,6 +17,25 @@ namespace Lexer
 	#define RESERVELISTSIZE 9
 	
 
+	class token:public string,public Analyser::value
+	{
+	public:
+		token():string(),Analyser::value()
+		{}
+		token(const token& t):string(t),Analyser::value(t)
+		{}
+		token(const string& str,const string& str_val,int int_val):string(str),Analyser::value(int_val,str_val)
+		{}
+		token(const string& str,const string& str_val):string(str),Analyser::value(str_val)
+		{}
+		token(const string& str,int int_val):string(str),Analyser::value(int_val)
+		{}
+		token(const string& str):string(str),Analyser::value()
+		{}
+	
+	};
+
+
 	extern char ch;
 	extern string code;
 	extern int ptr;
@@ -24,7 +44,7 @@ namespace Lexer
 	extern FILE* fp;
 	extern int index;
 	extern int value;
-	extern list<string> token_stream;
+	extern list<token> token_stream;
 
 	
 

@@ -13,7 +13,10 @@ namespace Lexer
 	int index;
 	int value;
 
-	list<string> token_stream;
+
+
+	list<token> token_stream;
+	//list<string> token_stream;
 
 	
 	
@@ -102,12 +105,12 @@ namespace Lexer
 				//cout<<"#ID,"<<value;
 				InsertId();
 				//cout<<"#ID,"<<strToken<<endl;
-				token_stream.push_back(string("ID"));
+				token_stream.push_back(token(string("ID"),strToken));
 			}
 			else
 			{
 				//cout<<index<<",-"<<endl;
-				token_stream.push_back(string(reserveList[index]));
+				token_stream.push_back(token(string(reserveList[index])));
 			}
 		}
 		else if(IsDigit())
@@ -122,27 +125,36 @@ namespace Lexer
 			//cout<<"#NUM,"<<value;
 			InsertConst();
 			//cout<<"#NUM,"<<strToken<<endl;
-			token_stream.push_back(string("NUM"));
+			token_stream.push_back(token(string("NUM"),atoi(strToken.c_str())));
+			
 		}
 		else if(ch=='+') 
 		{
 			//cout<<"#PLUS,-"<<endl;
-			token_stream.push_back(string("+"));
+			token_stream.push_back(token(string("+")));
+			
+			
 		}
 		else if(ch=='-') 
 		{
 			//cout<<"#MINUS,-"<<endl;
-			token_stream.push_back(string("-"));
+			token_stream.push_back(token(string("-")));
+			
+			
 		}
 		else if(ch=='*')
 		{
 			//cout<<"#MULI,-"<<endl;
-			token_stream.push_back(string("*"));
+			token_stream.push_back(token(string("*")));
+			
+			
 		}
 		else if(ch=='/')
 		{
 			//cout<<"#DIV,-"<<endl;
-			token_stream.push_back(string("/"));
+			token_stream.push_back(token(string("/")));
+			
+			
 		}
 		else if(ch=='<')//<=
 		{
@@ -150,12 +162,15 @@ namespace Lexer
 			if(ch=='=')
 			{
 				//cout<<"#LETHAN,-"<<endl;
-				token_stream.push_back(string("<="));
+				token_stream.push_back(token(string("<=")));
+				
 			}
 			else 
 			{
 				//Retract();cout<<"#LTHAN,-"<<endl;
-				token_stream.push_back(string("<"));
+				token_stream.push_back(token(string("<")));
+				
+				
 			}
 		}
 		else if(ch=='>')//>=
@@ -164,13 +179,17 @@ namespace Lexer
 			if(ch=='=')
 			{
 				//cout<<"#GETHAN,-"<<endl;
-				token_stream.push_back(string(">="));
+				token_stream.push_back(token(string(">=")));
+			
+			
 			}
 			else 
 			{
 				Retract();
 				//cout<<"#GTHAN,-"<<endl;
-				token_stream.push_back(string(">"));
+				token_stream.push_back(token(string(">")));
+				
+				
 			}
 		}
 		else if(ch=='=')//==
@@ -179,13 +198,15 @@ namespace Lexer
 			if(ch=='=') 
 			{
 				//cout<<"#EQUAL,-"<<endl;
-				token_stream.push_back(string("=="));
+				token_stream.push_back(token(string("==")));
+				
 			}
 			else
 			{
 				Retract();
 				//cout<<"#ASSIGN,-"<<endl;
-				token_stream.push_back(string("="));
+				token_stream.push_back(token(string("=")));
+				
 			}
 		}
 		else if(ch=='!')
@@ -194,53 +215,70 @@ namespace Lexer
 			if(ch=='=')
 			{
 				//cout<<"#NEQUAL,-"<<endl;
-				token_stream.push_back(string("!="));
+				token_stream.push_back(token(string("!=")));
+				
+				
 			}
 			else 
 			{
 				//cout<<"ERROR:!"<<endl;
-				token_stream.push_back(string("="));
+				token_stream.push_back(token(string("=")));
+				
 			}
 		}
 		else if(ch==';') 
 		{
 			//cout<<"#SEMICOLON,-"<<endl;
-			token_stream.push_back(string(";"));
+			token_stream.push_back(token(string(";")));
+			
 		}
 		else if(ch==',')
 		{
 			//cout<<"#COMMA,-"<<endl;
-			token_stream.push_back(string(","));
+			
+			token_stream.push_back(token(string(",")));
+			
 		}
 		else if(ch=='(')
 		{
 			//cout<<"#LBRACKET,-"<<endl;
-			token_stream.push_back(string("("));
+			
+			token_stream.push_back(token(string("(")));
+			
 		}
 		else if(ch==')')
 		{
 			//cout<<"#RBRACKET,-"<<endl;
-			token_stream.push_back(string(")"));
+			token_stream.push_back(token(string(")")));
+			
+			
 		}
 		else if(ch=='[')
 		{
 			//cout<<"#LSRACKET,-"<<endl;
-			token_stream.push_back(string("["));
+			token_stream.push_back(token(string("[")));
+			
 		}
 		else if(ch==']')
 		{
 			//cout<<"#RSRACKET,-"<<endl;
-			token_stream.push_back(string("]"));
+			
+			token_stream.push_back(token(string("]")));
+			
 		}
 		else if(ch=='{')
 		{
 			//cout<<"#CLRACKET,-"<<endl;
-			token_stream.push_back(string("{"));
+			token_stream.push_back(token(string("{")));
+			
+			
 		}
 		else if(ch=='}')
 		{
 			//cout<<"#CRRACKET,-"<<endl;
-			token_stream.push_back(string("}"));
+			token_stream.push_back(token(string("}")));
+			
+			
 		}
 		else if(ch==' ') ;//末尾空格的处理：忽视
 		else 

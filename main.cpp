@@ -3,9 +3,9 @@
 #include "Analyser.h"
 #include <stack>
 
-class CM_attri_gram_set:public Analyser::attri_gram_set
+
+namespace CM_attri_gram_set
 {
-public:
 		Analyser::value ag20(const Analyser::value& v)
 		{
 		//ag20: declar_local ¡ú declar_local declar_var
@@ -40,22 +40,70 @@ public:
 			return val;
 		}
 
-}ag_set;
+
+}
+
 
 class CM_analyser:public Analyser::LR_analyser
 {
 public:
-	static void analyse(const list<LR1PG::element>& e_stream)
+	static Analyser::value reduction(int produc_index)
 	{
-		list<LR1PG::element> elem_stream=e_stream;
-		//We need to put # at the end of elem_stream.
-		elem_stream.push_back(LR1PG::element(false,ter_list[string("#")]));
+		
+		vector<Analyser::ex_element> ex_elem_container;
+	
+		int num=production_set[produc_index].r_part_size;
 
-		list<LR1PG::element>::const_iterator ptr=elem_stream.begin();
+		//if it is X->. epsilon, the size does not mean the real length
+		if(production_set[produc_index].isWithEPSILON)
+			return	Analyser::value();
+
+		for(int i=0;i<num;i++)
+		{
+			ex_elem_container.push_back(LR_stack.top());
+			LR_stack.pop();
+		}
+
+		Analyser::value val;
+		{
+			
+			for(int i=0;i<ex_elem_container.size();i++)
+			{
+				for(int j=0;j<ex_elem_container[i].val.getIntValElemArraySize();j++)
+					for(int k=0;k<ex_elem_container[i].val.getintValVarArraySize(j);k++)
+						val.setIntValue(i,k,ex_elem_container[i].val.getIntValue(j,k));
+				
+				for(int j=0;j<ex_elem_container[i].val.getStrValElemArraySize();j++)
+					for(int k=0;k<ex_elem_container[i].val.getStrValVarArraySize(j);k++)
+						val.setStrValue(i,k,ex_elem_container[i].val.getStrValue(j,k));
+			}
+		}
+		Analyser::ex_produc_set[produc_index].set_value(val);
+
+		
+
+		return Analyser::ex_produc_set[produc_index].call_attri_gram(produc_index);
+	}
+
+	static void analyse(const list<Analyser::ex_element>& ex_e_stream)
+	{
+
+		list<Analyser::ex_element> elem_stream=ex_e_stream;
+		
+		//We need to put # at the end of elem_stream.
+		elem_stream.push_back(Analyser::ex_element(false,ter_list[string("#")],Analyser::value()));
+
+		list<Analyser::ex_element>::const_iterator ptr=elem_stream.begin();
 		int index_GOTO;
 
-		LR_stack.push(stack_block(0,LR1PG::element(false,ter_list.find("#")->second)));
+		{
+			Analyser::ex_element elem(false,ter_list[string("#")],Analyser::value());
+			LR_stack.push(stack_block(0,elem));
+
+			//Analyser::APT::constru_stack.push(Analyser::APT_node(elem));
+		}
 		
+
 
 		while(true)
 		{
@@ -64,7 +112,7 @@ public:
 			//$$
 			if((LR_stack.top().state_index==8)&&(ptr->toString()=="ID"))
 			{
-				list<LR1PG::element>::const_iterator it=ptr;
+				list<Analyser::ex_element>::const_iterator it=ptr;
 				it++;
 				
 				if((it!=elem_stream.end())&&((it->toString())=="("))
@@ -84,27 +132,40 @@ public:
 			switch (act.type)
 			{
 			case LR1PG::action_type::shift:
-				if(act.index==6)
-					cout<<"6"<<endl;
-				shift(act.index,*ptr);
-				ptr++;
-				cout<<act.toString()<<endl;
-				break;
+				{
+					shift(act.index,*ptr);
+					ptr++;
+					cout<<act.toString()<<endl;
+					break;
+				}
 			case LR1PG::action_type::reduction:
-				reduction(act.index);
-				index_GOTO=LR_table.at(LR_stack.top().state_index,production_set[act.index].l_part).index;
-				shift(index_GOTO,production_set[act.index].l_part);
-				cout<<act.toString()<<endl;
-				cout<<LR1PG::action(LR1PG::action_type::shift,index_GOTO).toString()<<endl;
-				break;
+				{
+					//$$
+				
+					//$$
+					Analyser::value val=reduction(act.index);
+					index_GOTO=LR_table.at(LR_stack.top().state_index,production_set[act.index].l_part).index;
+
+					
+					Analyser::ex_element elem(true,production_set[act.index].l_part.index,val);
+
+					shift(index_GOTO,elem);
+					cout<<act.toString()<<endl;
+					cout<<LR1PG::action(LR1PG::action_type::shift,index_GOTO).toString()<<endl;
+					break;
+				}
 			case LR1PG::action_type::accept:
-				cout<<"Accept!"<<endl;
-				loop_swch=true;
-				break;
+				{
+					cout<<"Accept!"<<endl;
+					loop_swch=true;
+					break;
+				}
 			case LR1PG::action_type::error:
-				cout<<"Error."<<endl;
-				loop_swch=true;
-				break;
+				{
+					cout<<"Error."<<endl;
+					loop_swch=true;
+					break;
+				}
 			}
 
 			if(loop_swch)
@@ -118,29 +179,37 @@ public:
 void main()
 {
 	
-	
-
-	
 	//to get var_list, ter_list, produc_set and set_C in LR1PG
 	//and var_list, ter_list, production_set in LR_analyser
 	CM_analyser::load_productions(string("wenfa.txt"));
 
 	for(int i=0;i<LR1PG::produc_set.size();i++)
 	{
-//		Analyser::ex_production((LR1PG::produc_set)[i]);
-
-	
+		LR1PG::produc_set[i];
+		Analyser::ex_production produc(LR1PG::produc_set[i]);
+		
 	}
+	{
+		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag20),20);
+		Analyser::ex_produc_set[20].set_gram(20);
+		Analyser::ex_production::add_gram(&CM_attri_gram_set::ag5,5);
+		Analyser::ex_produc_set[5].set_gram(5);
+		Analyser::ex_production::add_gram(&CM_attri_gram_set::ag6,6);
+		Analyser::ex_produc_set[6].set_gram(6);
+	}
+
 
 	//to get token_stream:
 	Lexer::load_code(string("b.cpp"));
 	
 	//token_stream to elem_stream:
-	list<LR1PG::element> elem_stream;
+	list<Analyser::ex_element> ex_elem_stream;
 	{
-		list<string>::iterator it;
+		list<Lexer::token>::const_iterator it;
+
 		for(it=Lexer::token_stream.begin();it!=Lexer::token_stream.end();it++)
-			elem_stream.push_back(LR1PG::element(false,LR1PG::ter_list[*it]));
+			ex_elem_stream.push_back(Analyser::ex_element(false,LR1PG::ter_list[*it],Analyser::value(*it)));
+		
 	}
 	
 	/*
@@ -153,7 +222,7 @@ void main()
 
 	
 	CM_analyser::load_table(string("TABLE.txt"));
-	CM_analyser::analyse(elem_stream);
+	CM_analyser::analyse(ex_elem_stream);
 
 
 	system("pause");

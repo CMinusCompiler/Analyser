@@ -11,8 +11,32 @@ namespace Analyser
 	stack<APT_node> APT::constru_stack;
 
 	vector<value (*)(const value& v)> ex_production::attri_grams;
-	
-	int ex_production::vecotr_ptr=0;
+	void ex_production::set_gram(int index)
+	{
+			gram_index=index;
+	}
+	value ex_production::call_attri_gram(const value& v)
+	{
+			return (attri_grams[gram_index])(v);
+	}
+		
+	int ex_production::add_gram(value (*g)(const value& v),int index)
+	{
+		if(!(index<attri_grams.size()))
+		{
+			for(int i=0;i<index-attri_grams.size()+1;i++)
+				attri_grams.push_back((value (*)(const value& v))int());
+		}
+
+		attri_grams[index]=g;
+		return index;
+	}
+	void ex_production::set_value(const value& v)
+	{
+		val=v;
+	}
+		
+		
 	
 	nesting_table symbol_table;
 	vector<int> nesting_table::memory_area;
@@ -87,7 +111,22 @@ namespace Analyser
 
 		return (str_val_array[elem_index])[val_index];
 	}
-
+	int value::getStrValElemArraySize()const
+	{
+		return str_val_array.size();
+	}
+	int value::getIntValElemArraySize()const
+	{
+		return int_val_array.size();
+	}
+	int value::getStrValVarArraySize(int index)const
+	{
+		return str_val_array[index].size();
+	}
+	int value::getintValVarArraySize(int index)const
+	{
+		return int_val_array[index].size();
+	}
 
 
 	void nesting_table::stack_push(nesting_table* ptr)
@@ -111,20 +150,24 @@ namespace Analyser
 		offset_pos+=size;
 	}
 
-	void LR_analyser::shift(int state_index,const LR1PG::element& elem)
+	void LR_analyser::shift(int state_index,const ex_element& elem)
 	{
 		LR_stack.push(stack_block(state_index,elem));	
+
+		//APT::constru_stack.push(APT_node(elem));
 	}
-	void LR_analyser::reduction(int produc_index)
+	value LR_analyser::reduction(int produc_index)
 	{
 		int num=production_set[produc_index].r_part_size;
 
 		//if it is X->. epsilon, the size does not mean the real length
 		if(production_set[produc_index].isWithEPSILON)
-			return;
+			return value(); 
 
 		for(int i=0;i<num;i++)
 			LR_stack.pop();
+
+		return value();
 	}
 	void LR_analyser::load_productions(const string& file_name)
 	{
@@ -145,17 +188,23 @@ namespace Analyser
 
 		production_set=LR1PG::produc_set;
 	}
-	void LR_analyser::analyse(const list<LR1PG::element>& e_stream)
+	void LR_analyser::analyse(const list<Analyser::ex_element>& ex_e_stream)
 	{
-		list<LR1PG::element> elem_stream=e_stream;
-		//We need to put # at the end of elem_stream.
-		elem_stream.push_back(LR1PG::element(false,ter_list[string("#")]));
 
-		list<LR1PG::element>::const_iterator ptr=elem_stream.begin();
+		list<Analyser::ex_element> elem_stream=ex_e_stream;
+		
+		//We need to put # at the end of elem_stream.
+		elem_stream.push_back(Analyser::ex_element(false,ter_list[string("#")],Analyser::value()));
+
+		list<Analyser::ex_element>::const_iterator ptr=elem_stream.begin();
 		int index_GOTO;
 
-		LR_stack.push(stack_block(0,LR1PG::element(false,ter_list.find("#")->second)));
+		{
+			Analyser::ex_element elem(false,ter_list[string("#")],Analyser::value());
+			LR_stack.push(stack_block(0,elem));
+		}
 		
+
 
 		while(true)
 		{
@@ -164,16 +213,18 @@ namespace Analyser
 			//$$
 			if((LR_stack.top().state_index==8)&&(ptr->toString()=="ID"))
 			{
-				list<LR1PG::element>::const_iterator it=ptr;
+				list<Analyser::ex_element>::const_iterator it=ptr;
 				it++;
 				
 				if((it!=elem_stream.end())&&((it->toString())=="("))
 					act.index=9;
 				else
 					act.index=7;
-
-				
-
+			}
+			if(LR_stack.top().state_index==301 && (ptr->toString()=="else"))
+			{
+				act.type=LR1PG::action_type::shift;
+				act.index=307;
 			}
 			//$$
 
@@ -182,32 +233,46 @@ namespace Analyser
 			switch (act.type)
 			{
 			case LR1PG::action_type::shift:
-				if(act.index==57)
-					cout<<"57"<<endl;
-				shift(act.index,*ptr);
-				ptr++;
-				cout<<act.toString()<<endl;
-				break;
+				{
+					shift(act.index,*ptr);
+					ptr++;
+					cout<<act.toString()<<endl;
+					break;
+				}
 			case LR1PG::action_type::reduction:
-				reduction(act.index);
-				index_GOTO=LR_table.at(LR_stack.top().state_index,production_set[act.index].l_part).index;
-				shift(index_GOTO,production_set[act.index].l_part);
-				cout<<act.toString()<<endl;
-				cout<<LR1PG::action(LR1PG::action_type::shift,index_GOTO).toString()<<endl;
-				break;
+				{
+					//$$
+				
+					//$$
+					Analyser::value val=reduction(act.index);
+					index_GOTO=LR_table.at(LR_stack.top().state_index,production_set[act.index].l_part).index;
+
+					
+					Analyser::ex_element elem(true,production_set[act.index].l_part.index,val);
+
+					shift(index_GOTO,elem);
+					cout<<act.toString()<<endl;
+					cout<<LR1PG::action(LR1PG::action_type::shift,index_GOTO).toString()<<endl;
+					break;
+				}
 			case LR1PG::action_type::accept:
-				cout<<"Accept!"<<endl;
-				loop_swch=true;
-				break;
+				{
+					cout<<"Accept!"<<endl;
+					loop_swch=true;
+					break;
+				}
 			case LR1PG::action_type::error:
-				cout<<"Error."<<endl;
-				loop_swch=true;
-				break;
+				{
+					cout<<"Error."<<endl;
+					loop_swch=true;
+					break;
+				}
 			}
 
 			if(loop_swch)
 				break;
 		}
+	
 	}
 	void LR_analyser::load_table(const string& file_name)
 	{
