@@ -121,9 +121,10 @@ void main()
 	
 
 	
-	//to get var_list, ter_list, produc_set and set_C:
-	LR1PG::load_productions(string("wenfa.txt"));
-	
+	//to get var_list, ter_list, produc_set and set_C in LR1PG
+	//and var_list, ter_list, production_set in LR_analyser
+	CM_analyser::load_productions(string("wenfa.txt"));
+
 	for(int i=0;i<LR1PG::produc_set.size();i++)
 	{
 //		Analyser::ex_production((LR1PG::produc_set)[i]);
@@ -150,7 +151,7 @@ void main()
 	Analyser::LR_analyser::analyse(elem_stream);
 	*/
 
-	CM_analyser::load_productions(string("wenfa.txt"));
+	
 	CM_analyser::load_table(string("TABLE.txt"));
 	CM_analyser::analyse(elem_stream);
 
