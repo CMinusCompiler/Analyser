@@ -17,11 +17,11 @@ namespace Analyser
 			int_instance=a.int_instance;
 			str_instance=a.str_instance;
 		}
-		int get_int(const string& key);
-		string get_str(const string& key);
+		int get_int(const string& key)const;
+		string get_str(const string& key)const;
 		void set_value(const string& key,int value);
 		void set_value(const string& key,string value);
-		bool isNull(const string& key);
+		bool isNull(const string& key,bool isInt)const;
 		
 
 	private:
@@ -29,7 +29,7 @@ namespace Analyser
 		map<string,string> str_instance;
 	};
 
-
+	/*
 	class value
 	{
 	
@@ -67,20 +67,32 @@ namespace Analyser
 		vector<vector<int> > int_val_array;
 		vector<vector<string> > str_val_array;
 	};
+	*/
 
 	class ex_element:public LR1PG::element
 	{
 	public:
-		value val;
 		ex_element():LR1PG::element(){}
-		ex_element(bool isVar,int index,const value& v):LR1PG::element(isVar,index)
+		ex_element(bool isVar,int index,const attribute& a):LR1PG::element(isVar,index)
 		{
-			val=v;
+			this->attri=a;
 		}
 		ex_element(const ex_element& e):LR1PG::element(e)
 		{
-			val=e.val;
+			attri=e.attri;
 		}
+		ex_element(const element& e):LR1PG::element(e)
+		{
+		}
+		void set_attri(const attribute& attri);
+		int get_int(const string& key)const;
+		string get_str(const string& key)const;
+		void set_value(const string& key,int value);
+		void set_value(const string& key,string value);
+		bool isNull(const string& key,bool isInt)const;
+	private:
+		attribute attri;
+		
 	};
 
 	class APT_node:public ex_element
@@ -93,7 +105,7 @@ namespace Analyser
 		{
 			children=node.children;
 		}
-		APT_node(bool isVar,int index,const value& v):ex_element(isVar,index,v)
+		APT_node(bool isVar,int index,const attribute& a):ex_element(isVar,index,a)
 		{}
 		APT_node(const ex_element& e):ex_element(e)
 		{}
@@ -111,29 +123,33 @@ namespace Analyser
 	
 	
 
-	class ex_production:public LR1PG::production
+	class ex_production
 	{
 	public:
-		value val;
-		ex_production():LR1PG::production()
-		{}
-		ex_production(const ex_production& produc):LR1PG::production(produc)
+		ex_element l_part;
+		vector<ex_element> r_part;
+		bool isAttriLoaded;
+
+		ex_production(const LR1PG::production& produc)
+		{
+		//cannot be created as a null object
+			l_part=produc.l_part;
+			isAttriLoaded=false;
+		}
+		ex_production(const ex_production& produc)
 		{
 			gram_index=produc.gram_index;
-			val=produc.val;
+			r_part=produc.r_part;
+			isAttriLoaded=produc.isAttriLoaded;
 		}
-		ex_production(const LR1PG::production& produc):LR1PG::production(produc)
-		{
-		}
-		ex_production(const LR1PG::production& produc,const value& v):LR1PG::production(produc)
-		{
-			val=v;
-		}
-		void set_value(const value& v);
-		void set_gram(int index);
-		value call_attri_gram(const value& v);
 		
-		static int add_gram(value (*g)(const value& v),int index);
+
+		void load_attributes(const vector<attribute>& attributes);
+		void load_attributes(const vector<ex_element>& ex_elem_container);
+		void set_gram(int index);
+		attribute call_attri_gram();
+		
+		static int add_gram(attribute (*g)(const vector<ex_element>& r_part),int index);
 		
 
 		
@@ -141,7 +157,7 @@ namespace Analyser
 		int gram_index;
 		
 		
-		static vector<value (*)(const value& v)> attri_grams;
+		static vector<attribute (*)(const vector<ex_element>& r_part)> attri_grams;
 	
 	};
 
@@ -206,7 +222,7 @@ namespace Analyser
 	
 		static stack<stack_block> LR_stack;
 		static void shift(int state_index,const APT_node& node);
-		static value reduction(int produc_index,APT_node& father);
+		static attribute reduction(int produc_index,APT_node& father);
 
 	public:
 		void static load_productions(const string& file_name);

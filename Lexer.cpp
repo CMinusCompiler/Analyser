@@ -105,9 +105,7 @@ namespace Lexer
 				//cout<<"#ID,"<<value;
 				InsertId();
 				//cout<<"#ID,"<<strToken<<endl;
-				token t(string("ID"),strToken);
-				
-				token_stream.push_back(t);
+				token_stream.push_back(token(string("ID"),string("name"),strToken));
 			}
 			else
 			{
@@ -127,7 +125,7 @@ namespace Lexer
 			//cout<<"#NUM,"<<value;
 			InsertConst();
 			//cout<<"#NUM,"<<strToken<<endl;
-			token_stream.push_back(token(string("NUM"),atoi(strToken.c_str())));
+			token_stream.push_back(token(string("NUM"),string("val"),atoi(strToken.c_str())));
 			
 		}
 		else if(ch=='+') 

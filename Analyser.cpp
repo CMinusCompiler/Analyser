@@ -3,44 +3,119 @@
 namespace Analyser
 {
 	
-	
-	
+	int attribute::get_int(const string& key)const
+	{
+		return (map<string,int>(this->int_instance))[key];
+	}
+	string attribute::get_str(const string& key)const
+	{
+		return (map<string,string>(this->str_instance))[key];
+	}
+
+	void attribute::set_value(const string& key,int value)
+	{
+		this->int_instance[key]=value;
+	}
+
+	void attribute::set_value(const string& key,string value)
+	{
+		this->str_instance[key]=value;
+	}
+
+	bool attribute::isNull(const string& key,bool isInt)const
+	{
+		if(isInt)
+			return (this->int_instance.find(key)==this->int_instance.end());
+		else
+			return (this->str_instance.find(key)==this->str_instance.end());
+	}
+		
 	
 	
 	APT_node& APT::root=APT_node();
 	stack<APT_node> APT::constru_stack;
 
-	vector<value (*)(const value& v)> ex_production::attri_grams;
+	
+	void ex_element::set_attri(const attribute& attri)
+	{
+		this->attri=attri;
+	}
+	int ex_element::get_int(const string& key)const
+	{
+		return attri.get_int(key);
+	}
+	string ex_element::get_str(const string& key)const
+	{
+		return attri.get_str(key);
+	}
+	void ex_element::set_value(const string& key,int value)
+	{
+		attri.set_value(key,value);
+	}
+	void ex_element::set_value(const string& key,string value)
+	{
+		attri.set_value(key,value);
+	}
+	bool ex_element::isNull(const string& key,bool isInt)const
+	{
+		return attri.isNull(key,isInt);
+	}
+
+
+	vector<attribute (*)(const vector<ex_element>& r_part)> ex_production::attri_grams;
 	void ex_production::set_gram(int index)
 	{
 			gram_index=index;
 	}
-	value ex_production::call_attri_gram(const value& v)
+
+	attribute ex_production::call_attri_gram()
 	{
 	//if the attribute grammer has not been defined,
 	//return a null object
+			if(!(this->isAttriLoaded))
+				return attribute();
+			
 			if(gram_index<attri_grams.size()&&attri_grams[gram_index])
-				return (attri_grams[gram_index])(v);
+				return (attri_grams[gram_index])(r_part);
 			else
-				return value();
+				return attribute();
 	}
-		
-	int ex_production::add_gram(value (*g)(const value& v),int index)
+	void ex_production::load_attributes(const vector<attribute>& attributes)
+	{
+		if(r_part.size()!=attributes.size())		
+		{
+			cout<<"Param form does not match;"<<endl;
+			return;
+		}
+
+		for(int i=0;i<r_part.size();i++)
+			r_part[i].set_attri(attributes[i]);
+		isAttriLoaded=true;
+	}
+	void ex_production::load_attributes(const vector<ex_element>& ex_elem_container)
+	{
+		if(r_part.size()!=ex_elem_container.size())
+		{
+			cout<<"Param form does not match;"<<endl;
+			return;
+		}
+		this->r_part=ex_elem_container;
+	}
+
+	int ex_production::add_gram(attribute (*g)(const vector<ex_element>& r_part),int index)
 	{
 		if(!(index<attri_grams.size()))
 		{
 			int d=index-attri_grams.size()+1;
 			for(int i=0;i<d;i++)
-				attri_grams.push_back((value (*)(const value& v))int());
+				attri_grams.push_back((attribute (*)(const vector<ex_element>& r_part))int());
 		}
 
 		attri_grams[index]=g;
 		return index;
 	}
-	void ex_production::set_value(const value& v)
-	{
-		val=v;
-	}
+	
+	
 		
 		
 	
@@ -51,88 +126,6 @@ namespace Analyser
 
 	vector<ex_production> ex_produc_set;
 
-
-	void value::setIntValue(int elem_index,int val_index,int value)
-	{
-		if(!(elem_index<int_val_array.size()))
-		{
-			int d=elem_index-int_val_array.size()+1;
-			for(int i=0;i<d;i++)
-				int_val_array.push_back(vector<int>());
-		}
-		if(!(val_index<int_val_array[elem_index].size()))
-		{
-			int d=val_index-int_val_array[elem_index].size()+1;
-			for(int i=0;i<d;i++)
-				(int_val_array[elem_index]).push_back(int());
-		}
-
-		(int_val_array[elem_index])[val_index]=value;
-
-	}
-	void value::setStrValue(int elem_index,int val_index,string str)
-	{
-		if(!(elem_index<str_val_array.size()))
-		{
-			int d=elem_index-str_val_array.size()+1;
-			for(int i=0;i<d;i++)
-				str_val_array.push_back(vector<string>());
-		}
-		if(!(val_index<str_val_array[elem_index].size()))
-		{
-			int d=val_index-str_val_array[elem_index].size()+1;
-			for(int i=0;i<d;i++)
-				(str_val_array[elem_index]).push_back(string());
-		}
-
-		(str_val_array[elem_index])[val_index]=str;
-	}
-	int value::getIntValue(int elem_index,int val_index)const 
-	{
-		if(!(elem_index<int_val_array.size()))
-		{
-			cout<<"Exceeded limit of the array."<<endl;
-			return int();
-		}
-		if(!(val_index<int_val_array[elem_index].size()))
-		{
-			cout<<"Exceeded limit of the array."<<endl;
-			return int();
-		}
-
-		return (int_val_array[elem_index])[val_index];
-	}
-	string value::getStrValue(int elem_index,int val_index)const 
-	{
-		if(!(elem_index<str_val_array.size()))
-		{
-			cout<<"Exceeded limit of the array."<<endl;
-			return int();
-		}
-		if(!(val_index<str_val_array[elem_index].size()))
-		{
-			cout<<"Exceeded limit of the array."<<endl;
-			return int();
-		}
-
-		return (str_val_array[elem_index])[val_index];
-	}
-	int value::getStrValElemArraySize()const
-	{
-		return str_val_array.size();
-	}
-	int value::getIntValElemArraySize()const
-	{
-		return int_val_array.size();
-	}
-	int value::getStrValVarArraySize(int index)const
-	{
-		return str_val_array[index].size();
-	}
-	int value::getintValVarArraySize(int index)const
-	{
-		return int_val_array[index].size();
-	}
 
 
 	void nesting_table::stack_push(nesting_table* ptr)
@@ -162,18 +155,18 @@ namespace Analyser
 
 		//APT::constru_stack.push(APT_node(elem));
 	}
-	value LR_analyser::reduction(int produc_index,APT_node& father)
+	attribute LR_analyser::reduction(int produc_index,APT_node& father)
 	{
 		int num=production_set[produc_index].r_part_size;
 
 		//if it is X->. epsilon, the size does not mean the real length
 		if(production_set[produc_index].isWithEPSILON)
-			return value(); 
+			return attribute(); 
 
 		for(int i=0;i<num;i++)
 			LR_stack.pop();
 
-		return value();
+		return attribute();
 	}
 	void LR_analyser::load_productions(const string& file_name)
 	{
@@ -200,7 +193,7 @@ namespace Analyser
 		list<Analyser::ex_element> elem_stream=ex_e_stream;
 		
 		//We need to put # at the end of elem_stream.
-		elem_stream.push_back(Analyser::ex_element(false,ter_list[string("#")],Analyser::value()));
+		elem_stream.push_back(Analyser::ex_element(false,ter_list[string("#")],Analyser::attribute()));
 
 		list<Analyser::ex_element>::const_iterator ptr=elem_stream.begin();
 		int index_GOTO;
@@ -208,7 +201,7 @@ namespace Analyser
 		
 		{
 			//it is a leaf node
-			Analyser::ex_element elem(false,ter_list[string("#")],Analyser::value());
+			Analyser::ex_element elem(false,ter_list[string("#")],Analyser::attribute());
 
 			stack_block block=stack_block(0,elem);
 			LR_stack.push(block);
@@ -222,23 +215,9 @@ namespace Analyser
 		{
 		 	LR1PG::action act=LR_table.at(LR_stack.top().state_index,*ptr);
 			
-			//$$
-			if((LR_stack.top().state_index==8)&&(ptr->toString()=="ID"))
-			{
-				list<Analyser::ex_element>::const_iterator it=ptr;
-				it++;
-				
-				if((it!=elem_stream.end())&&((it->toString())=="("))
-					act.index=9;
-				else
-					act.index=7;
-			}
-			if(LR_stack.top().state_index==301 && (ptr->toString()=="else"))
-			{
-				act.type=LR1PG::action_type::shift;
-				act.index=307;
-			}
-			//$$
+			//add conflict treatment here
+				/*...*/	
+			//
 
 			bool loop_swch=false;
 
@@ -247,6 +226,7 @@ namespace Analyser
 			case LR1PG::action_type::shift:
 				{
 				//nodes shifted directly are leaf nodes
+					
 					shift(act.index,*ptr);
 					ptr++;
 					cout<<act.toString()<<endl;
@@ -257,14 +237,13 @@ namespace Analyser
 					//Analyser::APT_node& father_node=*(new Analyser::APT_node());
 					Analyser::APT_node father_node;
 
-					Analyser::value val=reduction(act.index,father_node);
+					Analyser::attribute l_part_attri=reduction(act.index,father_node);
 					index_GOTO=LR_table.at(LR_stack.top().state_index,production_set[act.index].l_part).index;
 
 					
-					Analyser::ex_element elem(true,production_set[act.index].l_part.index,val);
+					Analyser::ex_element elem(true,production_set[act.index].l_part.index,l_part_attri);
 
 					father_node=elem;
-
 					shift(index_GOTO,father_node);
 
 					Analyser::APT::root=father_node;

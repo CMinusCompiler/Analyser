@@ -17,11 +17,24 @@ namespace Lexer
 	#define RESERVELISTSIZE 9
 	
 
-	class token:public string,public Analyser::value
+	class token:public string,public Analyser::attribute
 	{
 	public:
-		token():string(),Analyser::value()
+		token():string(),Analyser::attribute()
 		{}
+		token(const token& t):string(t),Analyser::attribute(t)
+		{}
+		token(const string& str):string(str),Analyser::attribute()
+		{}
+		token(const string& str,const string& key,const string& value):string(str)
+		{
+			Analyser::attribute::set_value(key,value);
+		}
+		token(const string& str,const string& key,int value):string(str)
+		{
+			Analyser::attribute::set_value(key,value);
+		}
+		/*
 		token(const token& t):string(t),Analyser::value(t)
 		{}
 		token(const string& str,const string& str_val,int int_val):string(str),Analyser::value(int_val,str_val)
@@ -30,9 +43,8 @@ namespace Lexer
 		{}
 		token(const string& str,int int_val):string(str),Analyser::value(int_val)
 		{}
-		token(const string& str):string(str),Analyser::value()
-		{}
-	
+		
+	*/
 	};
 
 

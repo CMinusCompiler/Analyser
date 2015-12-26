@@ -6,39 +6,63 @@
 
 namespace CM_attri_gram_set
 {
-		Analyser::value ag20(const Analyser::value& v)
+		Analyser::attribute ag21(const vector<Analyser::ex_element>& r_part)
 		{
-		//ag20: declar_local ¡ú declar_local declar_var
-			string ID=v.getStrValue(1,0);
-
-			int width=v.getIntValue(1,0);
-			Analyser::symbol_table.var_map[ID]=Analyser::nesting_table::get_offset();
+		/*ag21: declar_local ¡ú declar_local declar_var
+		{
+			enter(declar_var.name,declar_var.type,offset);
+			offset=offset+declar_var.width;
+		}*/
+		//in CM, there is not other types except int
+		//the declar_var.type attribute is not used here
+			string name=r_part[1].get_str("id");
+			int width=r_part[1].get_int("width");
+			Analyser::symbol_table.var_map[name]=Analyser::nesting_table::get_offset();
 			Analyser::nesting_table::incre_offset(width);
 
 			//it does not need to return value
-			return Analyser::value();
+			return Analyser::attribute();
 		}
-		Analyser::value ag5(const Analyser::value& v)
+		Analyser::attribute ag5(const vector<Analyser::ex_element>& r_part)
 		{
-		//ag5: declar_var ¡ú type_var ID ;
-			Analyser::value val;
+		/*ag5: declar_var ¡ú type_var ID ;
+		{
+			declar_var.type=type_var.type;
+			declar_var.width=1;
+			declar_var.name=ID.name;
+		}*/
+		//in CM, there is not other types except int
+		//the declar_var.type attribute is not used here
+		//and the memory unit is int 
+			Analyser::attribute attri;
 			
 			//ID.width=1
 			//val.setIntValue(0,0,v.getIntValue(1,0));
-			val.setIntValue(0,0,1);
-			val.setStrValue(0,0,v.getStrValue(1,0));
-			return val;
-		}
-		Analyser::value ag6(const Analyser::value& v)
-		{
-		//ag6: declar_var ¡ú type_var ID [ NUM ] ;
-
-			Analyser::value val;
+			attri.set_value("name",r_part[1].get_str("name"));
+			attri.set_value("width",1);
 			
-			//ID.width=ID.width*NUM.val
-			val.setIntValue(0,0,(v.getIntValue(1,0))*(v.getIntValue(3,0)));
-			val.setStrValue(0,0,v.getStrValue(1,0));
-			return val;
+			return attri;
+		}
+		Analyser::attribute ag6(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag6: declar_var ¡ú type_var ID [ NUM ] ;
+		{
+			declar_var.type=type_var.type;
+			declar_var.width=1*NUM.val;
+			declar_var.name=ID.name;
+		}*/
+		//in CM, there is not other types except int
+		//the declar_var.type attribute is not used here
+		//and the memory unit is int 
+
+			Analyser::attribute attri;
+			
+			//ID.width=1
+			//val.setIntValue(0,0,v.getIntValue(1,0));
+			attri.set_value("name",r_part[1].get_str("name"));
+			attri.set_value("width",1*r_part[3].get_int("val"));
+			
+			return attri;
 		}
 
 
@@ -48,7 +72,7 @@ namespace CM_attri_gram_set
 class CM_analyser:public Analyser::LR_analyser
 {
 public:
-	static Analyser::value reduction(int produc_index,Analyser::APT_node& father)
+	static Analyser::attribute reduction(int produc_index,Analyser::APT_node& father)
 	{
 		
 		vector<Analyser::ex_element> ex_elem_container;
@@ -57,7 +81,7 @@ public:
 
 		//if it is X->. epsilon, the size does not mean the real length
 		if(production_set[produc_index].isWithEPSILON)
-			return	Analyser::value();
+			return	Analyser::attribute();
 
 
 		for(int i=0;i<num;i++)
@@ -67,27 +91,13 @@ public:
 			LR_stack.pop();
 		}
 
-
-
-		Analyser::value val;
-		{
-			
-			for(int i=0;i<ex_elem_container.size();i++)
-			{
-				for(int j=0;j<ex_elem_container[i].val.getIntValElemArraySize();j++)
-					for(int k=0;k<ex_elem_container[i].val.getintValVarArraySize(j);k++)
-						val.setIntValue(i,k,ex_elem_container[i].val.getIntValue(j,k));
-				
-				for(int j=0;j<ex_elem_container[i].val.getStrValElemArraySize();j++)
-					for(int k=0;k<ex_elem_container[i].val.getStrValVarArraySize(j);k++)
-						val.setStrValue(i,k,ex_elem_container[i].val.getStrValue(j,k));
-			}
-		}
-		Analyser::ex_produc_set[produc_index].set_value(val);
-
+		//get attributes from the stack(contained in ex_elem_container)
+		//assign attributes to the ex_production to be reducted
+		//in other words, prepare the attribute grammer with the attributes
+		Analyser::ex_produc_set[produc_index].load_attributes(ex_elem_container);
 		
 
-		return Analyser::ex_produc_set[produc_index].call_attri_gram(val);
+		return Analyser::ex_produc_set[produc_index].call_attri_gram();
 	}
 
 	static void analyse(const list<Analyser::ex_element>& ex_e_stream)
@@ -96,7 +106,7 @@ public:
 		list<Analyser::ex_element> elem_stream=ex_e_stream;
 		
 		//We need to put # at the end of elem_stream.
-		elem_stream.push_back(Analyser::ex_element(false,ter_list[string("#")],Analyser::value()));
+		elem_stream.push_back(Analyser::ex_element(false,ter_list[string("#")],Analyser::attribute()));
 
 		list<Analyser::ex_element>::const_iterator ptr=elem_stream.begin();
 		int index_GOTO;
@@ -104,7 +114,7 @@ public:
 		
 		{
 			//it is a leaf node
-			Analyser::ex_element elem(false,ter_list[string("#")],Analyser::value());
+			Analyser::ex_element elem(false,ter_list[string("#")],Analyser::attribute());
 
 			stack_block block=stack_block(0,elem);
 			LR_stack.push(block);
@@ -118,9 +128,11 @@ public:
 		{
 		 	LR1PG::action act=LR_table.at(LR_stack.top().state_index,*ptr);
 			
-			//$$
+				
+			//add conflict treatment here
 			if((LR_stack.top().state_index==8)&&(ptr->toString()=="ID"))
 			{
+			//Conflicts at (I8,ID):r7 vs. r9
 				list<Analyser::ex_element>::const_iterator it=ptr;
 				it++;
 				
@@ -129,12 +141,13 @@ public:
 				else
 					act.index=7;
 			}
-			if(LR_stack.top().state_index==301 && (ptr->toString()=="else"))
+			if(LR_stack.top().state_index==307 && (ptr->toString()=="else"))
 			{
-				act.type=LR1PG::action_type::shift;
-				act.index=307;
+			//Conflicts at (I307,else):r32 vs. r35
+				act.type=LR1PG::action_type::reduction;
+				act.index=35;
 			}
-			//$$
+			//
 
 			bool loop_swch=false;
 
@@ -152,15 +165,10 @@ public:
 			case LR1PG::action_type::reduction:
 				{
 					//Analyser::APT_node& father_node=*(new Analyser::APT_node());
-					Analyser::APT_node father_node;
+					Analyser::APT_node& father_node=*(new Analyser::APT_node());
 
-					Analyser::value val=reduction(act.index,father_node);
+					Analyser::attribute l_part_attri=reduction(act.index,father_node);
 					index_GOTO=LR_table.at(LR_stack.top().state_index,production_set[act.index].l_part).index;
-
-					
-					Analyser::ex_element elem(true,production_set[act.index].l_part.index,val);
-
-					father_node=elem;
 
 					if(index_GOTO==37)
 						cout<<37<<endl;
@@ -192,7 +200,7 @@ public:
 				break;
 		}
 		
-		Analyser::APT::root=*(new Analyser::APT_node(Analyser::APT::root));
+//		Analyser::APT::root=*(new Analyser::APT_node(Analyser::APT::root));
 
 
 	}
@@ -214,7 +222,7 @@ void main()
 		Analyser::ex_produc_set.push_back(produc);
 	}
 	{
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag20),20);
+		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag21),21);
 		Analyser::ex_produc_set[20].set_gram(20);
 		Analyser::ex_production::add_gram(&CM_attri_gram_set::ag5,5);
 		Analyser::ex_produc_set[5].set_gram(5);
@@ -232,7 +240,7 @@ void main()
 		list<Lexer::token>::const_iterator it;
 
 		for(it=Lexer::token_stream.begin();it!=Lexer::token_stream.end();it++)
-			ex_elem_stream.push_back(Analyser::ex_element(false,LR1PG::ter_list[*it],Analyser::value(*it)));
+			ex_elem_stream.push_back(Analyser::ex_element(false,LR1PG::ter_list[*it],Analyser::attribute(*it)));
 	}
 	
 	/*
