@@ -105,7 +105,9 @@ namespace Lexer
 				//cout<<"#ID,"<<value;
 				InsertId();
 				//cout<<"#ID,"<<strToken<<endl;
-				token_stream.push_back(token(string("ID"),strToken));
+				token t(string("ID"),strToken);
+				
+				token_stream.push_back(t);
 			}
 			else
 			{

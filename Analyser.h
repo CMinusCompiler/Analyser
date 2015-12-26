@@ -6,6 +6,30 @@
 
 namespace Analyser
 {
+	class attribute
+	{
+	public:
+		attribute()
+		{
+		}
+		attribute(const attribute& a)
+		{
+			int_instance=a.int_instance;
+			str_instance=a.str_instance;
+		}
+		int get_int(const string& key);
+		string get_str(const string& key);
+		void set_value(const string& key,int value);
+		void set_value(const string& key,string value);
+		bool isNull(const string& key);
+		
+
+	private:
+		map<string,int> int_instance;
+		map<string,string> str_instance;
+	};
+
+
 	class value
 	{
 	

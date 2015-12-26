@@ -17,14 +17,20 @@ namespace Analyser
 	}
 	value ex_production::call_attri_gram(const value& v)
 	{
-			return (attri_grams[gram_index])(v);
+	//if the attribute grammer has not been defined,
+	//return a null object
+			if(gram_index<attri_grams.size()&&attri_grams[gram_index])
+				return (attri_grams[gram_index])(v);
+			else
+				return value();
 	}
 		
 	int ex_production::add_gram(value (*g)(const value& v),int index)
 	{
 		if(!(index<attri_grams.size()))
 		{
-			for(int i=0;i<index-attri_grams.size()+1;i++)
+			int d=index-attri_grams.size()+1;
+			for(int i=0;i<d;i++)
 				attri_grams.push_back((value (*)(const value& v))int());
 		}
 
@@ -66,15 +72,15 @@ namespace Analyser
 	}
 	void value::setStrValue(int elem_index,int val_index,string str)
 	{
-		if(!(elem_index<int_val_array.size()))
+		if(!(elem_index<str_val_array.size()))
 		{
-			int d=elem_index-int_val_array.size()+1;
+			int d=elem_index-str_val_array.size()+1;
 			for(int i=0;i<d;i++)
 				str_val_array.push_back(vector<string>());
 		}
-		if(!(val_index<int_val_array[elem_index].size()))
+		if(!(val_index<str_val_array[elem_index].size()))
 		{
-			int d=val_index-int_val_array[elem_index].size()+1;
+			int d=val_index-str_val_array[elem_index].size()+1;
 			for(int i=0;i<d;i++)
 				(str_val_array[elem_index]).push_back(string());
 		}

@@ -24,7 +24,8 @@ namespace CM_attri_gram_set
 			Analyser::value val;
 			
 			//ID.width=1
-			val.setIntValue(0,0,v.getIntValue(1,0));
+			//val.setIntValue(0,0,v.getIntValue(1,0));
+			val.setIntValue(0,0,1);
 			val.setStrValue(0,0,v.getStrValue(1,0));
 			return val;
 		}
@@ -86,7 +87,7 @@ public:
 
 		
 
-		return Analyser::ex_produc_set[produc_index].call_attri_gram(produc_index);
+		return Analyser::ex_produc_set[produc_index].call_attri_gram(val);
 	}
 
 	static void analyse(const list<Analyser::ex_element>& ex_e_stream)
@@ -142,6 +143,7 @@ public:
 			case LR1PG::action_type::shift:
 				{
 				//nodes shifted directly are leaf nodes
+					
 					shift(act.index,*ptr);
 					ptr++;
 					cout<<act.toString()<<endl;
@@ -159,6 +161,10 @@ public:
 					Analyser::ex_element elem(true,production_set[act.index].l_part.index,val);
 
 					father_node=elem;
+
+					if(index_GOTO==37)
+						cout<<37<<endl;
+
 
 					shift(index_GOTO,father_node);
 
@@ -203,8 +209,9 @@ void main()
 	for(int i=0;i<LR1PG::produc_set.size();i++)
 	{
 		LR1PG::produc_set[i];
-		Analyser::ex_production produc(LR1PG::produc_set[i]);
 		
+		Analyser::ex_production produc(LR1PG::produc_set[i]);
+		Analyser::ex_produc_set.push_back(produc);
 	}
 	{
 		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag20),20);
@@ -226,7 +233,6 @@ void main()
 
 		for(it=Lexer::token_stream.begin();it!=Lexer::token_stream.end();it++)
 			ex_elem_stream.push_back(Analyser::ex_element(false,LR1PG::ter_list[*it],Analyser::value(*it)));
-		
 	}
 	
 	/*
