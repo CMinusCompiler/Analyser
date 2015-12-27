@@ -2,6 +2,8 @@
 
 namespace Analyser
 {
+
+
 	
 	int attribute::get_int(const string& key)const
 	{
@@ -115,39 +117,73 @@ namespace Analyser
 		return index;
 	}
 	
-	
+	vector<ex_production> ex_produc_set;
 		
 		
 	
 	nesting_table symbol_table;
-	vector<int> nesting_table::memory_area;
-	int nesting_table::offset_pos=0;
-	stack<nesting_table* > nesting_table::nestptr_stack;
-
-	vector<ex_production> ex_produc_set;
-
-
-
-	void nesting_table::stack_push(nesting_table* ptr)
+	stack<nesting_table> nesting_table::nestptr_stack;
+	stack<int> nesting_table::offsetptr_stack;
+	
+	
+	vector<int> global_memory::mem;
+	int global_memory::ptr=0;
+	int global_memory::get_ptr()
 	{
-		nestptr_stack.push(ptr);
+		return ptr;
 	}
-	void nesting_table::stack_pop()
+	void global_memory::alloc(int num)
+	{
+		for(int i=0;i<num;i++)
+			mem.push_back(int());
+		ptr=mem.size();
+	}
+	int& global_memory::at(int pos)
+	{
+		return mem[pos];
+	}
+	
+	
+	int nesting_table::get_global_ptr(const string& name)
+	{
+		return this->ptr+var_map[name];
+	}
+
+	void nesting_table::stack_init()
+	{
+		nstack_push(symbol_table);
+		ostack_push(0);
+	}
+	void nesting_table::ostack_push(int ptr)
+	{
+		offsetptr_stack.push(ptr);
+	}
+	void nesting_table::ostack_pop()
+	{
+		offsetptr_stack.pop();
+	}
+	int& nesting_table::ostack_top()
+	{
+		return offsetptr_stack.top();
+	}
+
+
+	void nesting_table::nstack_push(nesting_table t)
+	{
+		nestptr_stack.push(t);
+	}
+	void nesting_table::nstack_pop()
 	{
 		nestptr_stack.pop();
 	}
-	nesting_table* nesting_table::stack_top()
+	nesting_table& nesting_table::nstack_top()
 	{
 		return nestptr_stack.top();
 	}
-	int nesting_table::get_offset()
-	{
-		return offset_pos;
-	}
-	void nesting_table::incre_offset(int size)
-	{
-		offset_pos+=size;
-	}
+	
+	
+
+
 
 	void LR_analyser::shift(int state_index,const APT_node& node)
 	{
@@ -222,8 +258,9 @@ namespace Analyser
 			
 		}
 		
+		//push zeroth layer info into stacks
+		nesting_table::stack_init();
 		
-
 		while(true)
 		{
 		 	LR1PG::action act=LR_table.at(LR_stack.top().state_index,*ptr);

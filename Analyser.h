@@ -6,6 +6,11 @@
 
 namespace Analyser
 {
+	enum op_tpye
+	{
+		add,min,mul,div,let,lt,gt,get,eq,neq
+	};
+
 	class attribute
 	{
 	public:
@@ -165,6 +170,17 @@ namespace Analyser
 
 	
 	
+	class global_memory
+	{
+	private:
+		static vector<int> mem;
+		static int ptr;
+	public:
+		static int get_ptr();
+		static void alloc(int num);
+		static int& at(int pos);
+	};
+
 
 	class nesting_table
 	{
@@ -173,23 +189,44 @@ namespace Analyser
 	//it should be map<class x,int>(x is a class recording the name and type).
 		map<string,int> var_map;
 		list<nesting_table> nes_body_list;
+		//record the begining position of this table in global_memory
+		int ptr;
+
 		nesting_table()
 		{
+		}
+		nesting_table(int ptr)
+		{
+			this->ptr=ptr;
 		}
 		nesting_table(const nesting_table& table)
 		{
 			var_map=table.var_map;
 			nes_body_list=table.nes_body_list;
+			
+			ptr=table.ptr;
 		}
-		static void stack_push(nesting_table* ptr);
-		static void stack_pop();
-		static nesting_table* stack_top();
-		static int get_offset();
-		static void incre_offset(int size);
+		
+		int get_global_ptr(const string& name);
+		static void stack_init();
+
+		static void ostack_push(int ptr);
+		static void ostack_pop();
+		static int& ostack_top();
+
+		static void nstack_push(nesting_table ptr);
+		static void nstack_pop();
+		static nesting_table& nstack_top();
+
+		
 	private:
-		static vector<int> memory_area;
-		static int offset_pos;
-		static stack<nesting_table* > nestptr_stack;
+		
+		
+		
+		static stack<int> offsetptr_stack;
+		//help record which nesting we are in
+		static stack<nesting_table> nestptr_stack;
+		
 	};
 	//the zeroth layer
 	extern nesting_table symbol_table;
