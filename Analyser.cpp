@@ -16,7 +16,7 @@ namespace Analyser
 	{
 		this->int_instance[key]=value;
 	}
-
+	
 	void attribute::set_value(const string& key,string value)
 	{
 		this->str_instance[key]=value;
@@ -157,16 +157,29 @@ namespace Analyser
 	}
 	attribute LR_analyser::reduction(int produc_index,APT_node& father)
 	{
+		vector<Analyser::ex_element> ex_elem_container;
+	
 		int num=production_set[produc_index].r_part_size;
 
 		//if it is X->. epsilon, the size does not mean the real length
 		if(production_set[produc_index].isWithEPSILON)
-			return attribute(); 
+			return	Analyser::attribute();
+
 
 		for(int i=0;i<num;i++)
+		{
+			ex_elem_container.push_back(LR_stack.top());
+			father.children.push_back(LR_stack.top());
 			LR_stack.pop();
+		}
 
-		return attribute();
+		//get attributes from the stack(contained in ex_elem_container)
+		//assign attributes to the ex_production to be reducted
+		//in other words, prepare the attribute grammer with the attributes
+		Analyser::ex_produc_set[produc_index].load_attributes(ex_elem_container);
+		
+
+		return Analyser::ex_produc_set[produc_index].call_attri_gram();
 	}
 	void LR_analyser::load_productions(const string& file_name)
 	{
@@ -206,7 +219,7 @@ namespace Analyser
 			stack_block block=stack_block(0,elem);
 			LR_stack.push(block);
 
-			//Analyser::APT::constru_stack.push(Analyser::APT_node(elem));
+			
 		}
 		
 		
@@ -216,7 +229,7 @@ namespace Analyser
 		 	LR1PG::action act=LR_table.at(LR_stack.top().state_index,*ptr);
 			
 			//add conflict treatment here
-				/*...*/	
+			conflict_management(elem_stream,ptr,act);
 			//
 
 			bool loop_swch=false;
@@ -346,11 +359,5 @@ namespace Analyser
 		fclose(fp);	
 	}
 
-	map<string,int> LR_analyser::var_list;
-	map<string,int> LR_analyser::ter_list;
-	set<LR1PG::element> LR_analyser::element_set;
-	vector<LR1PG::production> LR_analyser::production_set;
-	LR1PG::LR_analysis_table LR_analyser::LR_table;
 	
-	stack<LR_analyser::stack_block> LR_analyser::LR_stack;
 }

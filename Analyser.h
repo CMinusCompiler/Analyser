@@ -213,22 +213,22 @@ namespace Analyser
 				this->state_index=block.state_index;
 			}
 		};
-		static map<string,int> var_list;
-		static map<string,int> ter_list;
-		static set<LR1PG::element> element_set;
-		static vector<LR1PG::production> production_set;
-		static LR1PG::LR_analysis_table LR_table;
+		map<string,int> var_list;
+		map<string,int> ter_list;
+		set<LR1PG::element> element_set;
+		vector<LR1PG::production> production_set;
+		LR1PG::LR_analysis_table LR_table;
 
 	
-		static stack<stack_block> LR_stack;
-		static void shift(int state_index,const APT_node& node);
-		static attribute reduction(int produc_index,APT_node& father);
-
-	public:
-		void static load_productions(const string& file_name);
-		void static load_table(const string& file_name);
-		void static analyse(const list<Analyser::ex_element>& ex_e_stream);
+		stack<stack_block> LR_stack;
+		void shift(int state_index,const APT_node& node);
+		attribute reduction(int produc_index,APT_node& father);
+		virtual void conflict_management(const list<Analyser::ex_element>& elem_stream,const list<Analyser::ex_element>::const_iterator& ptr,LR1PG::action& act)=0;
 		
 
+	public:
+		void load_productions(const string& file_name);
+		void load_table(const string& file_name);
+		void analyse(const list<Analyser::ex_element>& ex_e_stream);
 	};
 }
