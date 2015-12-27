@@ -6,6 +6,36 @@
 
 namespace Analyser
 {
+
+	class quad_expression
+	{
+	private:
+		vector<string> instance;
+		string str_instance;
+	public:
+		quad_expression(const string& op,const string& s1,const string& s2,const string& tar)
+		{
+			instance.push_back(op);
+			instance.push_back(s1);
+			instance.push_back(s2);
+			instance.push_back(tar);
+		}
+		quad_expression(const quad_expression& quad)
+		{
+			instance=quad.instance;
+		}
+		quad_expression(const string& str)
+		{
+			str_instance=str;
+		}
+		quad_expression(const char* str)
+		{
+			str_instance=string(str);
+		}
+		string toString();
+
+	};
+
 	enum op_tpye
 	{
 		add,min,mul,div,let,lt,gt,get,eq,neq
@@ -173,6 +203,7 @@ namespace Analyser
 	class global_memory
 	{
 	private:
+		//record static variables and temperary variables
 		static vector<int> mem;
 		static int ptr;
 	public:
@@ -182,6 +213,14 @@ namespace Analyser
 	};
 
 
+	class Tx_allocator
+	{
+	private:
+		static int index;
+	public:
+		static string generate_str();
+	};
+
 	class nesting_table
 	{
 	public:
@@ -189,25 +228,33 @@ namespace Analyser
 	//it should be map<class x,int>(x is a class recording the name and type).
 		map<string,int> var_map;
 		list<nesting_table> nes_body_list;
+		nesting_table* pre_table;
+		
+
 		//record the begining position of this table in global_memory
 		int ptr;
 
 		nesting_table()
 		{
 		}
-		nesting_table(int ptr)
+		nesting_table(int ptr,nesting_table* pre)
 		{
 			this->ptr=ptr;
+			this->pre_table=pre;
 		}
 		nesting_table(const nesting_table& table)
 		{
 			var_map=table.var_map;
 			nes_body_list=table.nes_body_list;
-			
+			pre_table=table.pre_table;
+
 			ptr=table.ptr;
 		}
 		
+		//same as lookup() in text book
 		int get_global_ptr(const string& name);
+		
+		
 		static void stack_init();
 
 		static void ostack_push(int ptr);
@@ -217,6 +264,7 @@ namespace Analyser
 		static void nstack_push(nesting_table ptr);
 		static void nstack_pop();
 		static nesting_table& nstack_top();
+
 
 		
 	private:
@@ -229,7 +277,7 @@ namespace Analyser
 		
 	};
 	//the zeroth layer
-	extern nesting_table symbol_table;
+	extern nesting_table* symbol_table;
 	
 
 

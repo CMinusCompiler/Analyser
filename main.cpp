@@ -62,6 +62,12 @@ namespace CM_attri_gram_set
 			Analyser::global_memory::alloc(Analyser::nesting_table::ostack_top());
 			Analyser::nesting_table::ostack_pop();
 			Analyser::nesting_table::nstack_top().nes_body_list.push_back(t);
+
+			//to get the zeroth nesting table instance;
+			if(t.pre_table->pre_table==NULL)
+				Analyser::symbol_table=new Analyser::nesting_table(t);
+			
+			return Analyser::attribute();
 		}
 
 		Analyser::attribute ag20(const vector<Analyser::ex_element>& r_part)
@@ -69,10 +75,17 @@ namespace CM_attri_gram_set
 		/*ag20: N1 ¡ú ¦Å
 		{
 			nesting_table t;
+
 			nesting_table::nstack_push(t);
+			nesting_table::ostack_push(0);
 		}*/
-			Analyser::nesting_table t(Analyser::global_memory::get_ptr());
+			Analyser::nesting_table* pre=new Analyser::nesting_table(Analyser::nesting_table::nstack_top());
+			Analyser::nesting_table t(Analyser::global_memory::get_ptr(),pre);
 			Analyser::nesting_table::nstack_push(t);
+			Analyser::nesting_table::ostack_push(0);
+
+
+			return Analyser::attribute();
 		}
 
 		Analyser::attribute ag21(const vector<Analyser::ex_element>& r_part)
@@ -104,7 +117,8 @@ namespace CM_attri_gram_set
 		}*/
 			Analyser::attribute attri;
 			
-			attri.set_value(string("type"),Analyser::op_tpye::add);
+			attri.set_value(string("type"),string("+"));
+			return attri;
 		}
 		Analyser::attribute ag54(const vector<Analyser::ex_element>& r_part)
 		{
@@ -114,7 +128,8 @@ namespace CM_attri_gram_set
 		}*/
 			Analyser::attribute attri;
 			
-			attri.set_value(string("type"),Analyser::op_tpye::min);
+			attri.set_value(string("type"),string("-"));
+			return attri;
 		}
 		Analyser::attribute ag57(const vector<Analyser::ex_element>& r_part)
 		{
@@ -124,7 +139,8 @@ namespace CM_attri_gram_set
 		}*/
 			Analyser::attribute attri;
 			
-			attri.set_value(string("type"),Analyser::op_tpye::mul);
+			attri.set_value(string("type"),string("*"));
+			return attri;
 		}
 		Analyser::attribute ag58(const vector<Analyser::ex_element>& r_part)
 		{
@@ -134,7 +150,8 @@ namespace CM_attri_gram_set
 		}*/
 			Analyser::attribute attri;
 			
-			attri.set_value(string("type"),Analyser::op_tpye::div);
+			attri.set_value(string("type"),string("/"));
+			return attri;
 		}
 		Analyser::attribute ag45(const vector<Analyser::ex_element>& r_part)
 		{
@@ -144,7 +161,8 @@ namespace CM_attri_gram_set
 		}*/
 			Analyser::attribute attri;
 			
-			attri.set_value(string("type"),Analyser::op_tpye::let);
+			attri.set_value(string("type"),string("<="));
+			return attri;
 		}
 		Analyser::attribute ag46(const vector<Analyser::ex_element>& r_part)
 		{
@@ -154,7 +172,8 @@ namespace CM_attri_gram_set
 		}*/
 			Analyser::attribute attri;
 			
-			attri.set_value(string("type"),Analyser::op_tpye::lt);
+			attri.set_value(string("type"),string("<"));
+			return attri;
 		}
 		Analyser::attribute ag47(const vector<Analyser::ex_element>& r_part)
 		{
@@ -164,7 +183,8 @@ namespace CM_attri_gram_set
 		}*/
 			Analyser::attribute attri;
 			
-			attri.set_value(string("type"),Analyser::op_tpye::gt);
+			attri.set_value(string("type"),string(">"));
+			return attri;
 		}
 		Analyser::attribute ag48(const vector<Analyser::ex_element>& r_part)
 		{
@@ -174,7 +194,8 @@ namespace CM_attri_gram_set
 		}*/
 			Analyser::attribute attri;
 			
-			attri.set_value(string("type"),Analyser::op_tpye::get);
+			attri.set_value(string("type"),string(">="));
+			return attri;
 		}
 		Analyser::attribute ag49(const vector<Analyser::ex_element>& r_part)
 		{
@@ -184,7 +205,8 @@ namespace CM_attri_gram_set
 		}*/
 			Analyser::attribute attri;
 			
-			attri.set_value(string("type"),Analyser::op_tpye::eq);
+			attri.set_value(string("type"),string("=="));
+			return attri;
 		}
 		Analyser::attribute ag50(const vector<Analyser::ex_element>& r_part)
 		{
@@ -194,26 +216,34 @@ namespace CM_attri_gram_set
 		}*/
 			Analyser::attribute attri;
 			
-			attri.set_value(string("type"),Analyser::op_tpye::neq);
+			attri.set_value(string("type"),string("!="));
+			return attri;
 		}
 		Analyser::attribute ag51(const vector<Analyser::ex_element>& r_part)
 		{
 		/*ag51: expre_arith ¡ú expre_arith1 op_add term
 		{
 			global_memory::alloc(1);
-			nesting_table::nstack_top().var_map["#Tx"]=nesting_table::ostack_top();
+			nesting_table::nstack_top().var_map[Tx]=nesting_table::ostack_top();
 			nesting_table::ostack_top()+=1;
-			emit(op_add.type,expre_arith1.global_ptr,term.global_ptr,#Tx.global_ptr);
-			expre_arith.global_ptr=#Tx.global_ptr;
+
+			emit(op_add.type,expre_arith1.global_ptr,term.global_ptr,Tx.global_ptr);
+			expre_arith.global_ptr=nesting_table::nstack_top().get_global_ptr(Tx);
+			
 		}*/
 			
-			Analyser::attribute attri;
+			
 			Analyser::global_memory::alloc(1);
-			string Tx=Analyser::Tx_allocator();
-			Analyser::nesting_table::nstack_top().var_map[string("#Tx")]=Analyser::nesting_table::ostack_top();
-			printf("(%s,%d,%d,%d)\n",r_part[1].get_str("type"),r_part[0].get_int("global_ptr"),r_part[2].get_int("global_ptr"),Analyser::nesting_table::nstack_top().get_global_ptr(string("#Tx")));
-			attri.set_value("global_ptr",Analyser::nesting_table::nstack_top().get_global_ptr(string("#Tx")));
+			string Tx=Analyser::Tx_allocator::generate_str();
+			Analyser::nesting_table::nstack_top().var_map[Tx]=Analyser::nesting_table::ostack_top();
+			Analyser::nesting_table::ostack_top()+=1;
 
+			printf("(%s,#%d,#%d,#%d)\n",r_part[1].get_str("type"),r_part[0].get_int("global_ptr"),r_part[2].get_int("global_ptr"),Analyser::nesting_table::nstack_top().get_global_ptr(Tx));
+			
+			Analyser::attribute attri;
+			attri.set_value("global_ptr",Analyser::nesting_table::nstack_top().get_global_ptr(Tx));
+			
+			return attri;
 		}
 		Analyser::attribute ag39(const vector<Analyser::ex_element>& r_part)
 		{
@@ -221,12 +251,11 @@ namespace CM_attri_gram_set
 		{
 			emit(=,expre1.global_ptr,-,var.global_ptr);
 			expre.global_ptr=var.global_ptr;
-			
-
 		}*/
-			printf("(=,%d,-,%d)\n",r_part[2].get_int(string("global_ptr")),r_part[0].get_int(string("global_ptr")));
+			printf("(=,#%d,-,#%d)\n",r_part[2].get_int(string("global_ptr")),r_part[0].get_int(string("global_ptr")));
 			Analyser::attribute attri;
 			attri.set_value("global_ptr",r_part[0].get_int(string("global_ptr")));
+			return attri;
 		}
 		
 		Analyser::attribute ag42(const vector<Analyser::ex_element>& r_part)
@@ -234,17 +263,172 @@ namespace CM_attri_gram_set
 		/*ag42: var ¡ú ID [ expre ]
 		{
 			
+			global_memory::alloc(1);
+			nesting_table::nstack_top().var_map[Tx]=nesting_table::ostack_top();
+			nesting_table::ostack_top()+=1;
 
-			emit(=,expre1.global_ptr,-,var.global_ptr);
-			expre.global_ptr=var.global_ptr;
-			
-
+			emit([],ID.global_ptr,expre.global_ptr,Tx);
+			nesting_table::nstack_top().var_map["#Tx"]=nesting_table::ostack_top();
+			var.global_ptr=#Tx.global_ptr;
 		}*/
-			printf("(=,%d,-,%d)\n",r_part[2].get_int(string("global_ptr")),r_part[0].get_int(string("global_ptr")));
+			Analyser::global_memory::alloc(1);
+			string Tx=Analyser::Tx_allocator::generate_str();
+			Analyser::nesting_table::nstack_top().var_map[Tx]=Analyser::nesting_table::ostack_top();
+			Analyser::nesting_table::ostack_top()+=1;
+
+			printf("([],#%d,#%d,%s)\n",Analyser::nesting_table::nstack_top().get_global_ptr[r_part[0].get_str("name")],r_part[2].get_int(string("global_ptr")),Tx);
+
 			Analyser::attribute attri;
-			attri.set_value("global_ptr",r_part[0].get_int(string("global_ptr")));
+			attri.set_value(string("global_ptr"),Analyser::nesting_table::nstack_top().get_global_ptr(Tx));
+			
+			return attri;
 		}
-		
+
+		Analyser::attribute ag41(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag41: var ¡ú ID
+		{
+			var.global_ptr=ID.global_ptr;
+		}*/
+			Analyser::attribute attri;
+			attri.set_value(string("global_ptr"),Analyser::nesting_table::nstack_top().get_global_ptr(r_part[0].get_str("name")));
+			return attri;
+		}
+		Analyser::attribute ag52(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag52: expre_arith ¡ú term
+		{
+			expre_arith.global_ptr=expre_arith.global_ptr;
+		}*/
+			Analyser::attribute attri;
+			attri.set_value(string("global_ptr"),r_part[0].get_int(string("global_ptr")));
+			return attri;
+		}
+		Analyser::attribute ag56(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag56: term ¡ú factor
+		{
+			term.global_ptr=factor.global_ptr;
+		}*/
+			Analyser::attribute attri;
+			attri.set_value(string("global_ptr"),r_part[0].get_int(string("global_ptr")));
+			return attri;
+		}
+		Analyser::attribute ag60(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag60: factor ¡ú var
+		{
+			factor.global_ptr=var.global_ptr;
+		}*/
+			Analyser::attribute attri;
+			attri.set_value(string("global_ptr"),r_part[0].get_int(string("global_ptr")));
+			return attri;
+		}
+		Analyser::attribute ag59(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag59: factor ¡ú ( expre )
+		{
+			factor.global_ptr=expre.global_ptr;
+		}*/
+			Analyser::attribute attri;
+			attri.set_value(string("global_ptr"),r_part[1].get_int(string("global_ptr")));
+			return attri;
+		}
+		Analyser::attribute ag44(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag44: expre_rel ¡ú expre_arith
+		{
+			expre_rel.global_ptr=expre_arith.global_ptr;
+		}*/
+			Analyser::attribute attri;
+			attri.set_value(string("global_ptr"),r_part[0].get_int(string("global_ptr")));
+			return attri;
+		}
+		Analyser::attribute ag40(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag40: expre ¡ú expre_rel
+		{
+			expre.global_ptr=expre_rel.global_ptr;
+		}*/
+			Analyser::attribute attri;
+			attri.set_value(string("global_ptr"),r_part[0].get_int(string("global_ptr")));
+			return attri;
+		}
+		Analyser::attribute ag55(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag55: term ¡ú term1 op_mul factor
+		{
+			global_memory::alloc(1);
+			nesting_table::nstack_top().var_map[Tx]=nesting_table::ostack_top();
+			nesting_table::ostack_top()+=1;
+
+			emit(op_mul.type,term1.global_ptr,factor.global_ptr,Tx.global_ptr);
+			term.global_ptr=nesting_table::nstack_top().get_global_ptr(Tx);
+			
+		}*/
+			
+			
+			Analyser::global_memory::alloc(1);
+			string Tx=Analyser::Tx_allocator::generate_str();
+			Analyser::nesting_table::nstack_top().var_map[Tx]=Analyser::nesting_table::ostack_top();
+			Analyser::nesting_table::ostack_top()+=1;
+
+			printf("(%s,#%d,#%d,#%d)\n",r_part[1].get_str("type"),r_part[0].get_int("global_ptr"),r_part[2].get_int("global_ptr"),Analyser::nesting_table::nstack_top().get_global_ptr(Tx));
+			
+			Analyser::attribute attri;
+			attri.set_value("global_ptr",Analyser::nesting_table::nstack_top().get_global_ptr(Tx));
+			
+			return attri;
+		}
+		Analyser::attribute ag43(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag43: expre_rel ¡ú expre_arith op_rel expre_arith1
+		{
+			global_memory::alloc(1);
+			nesting_table::nstack_top().var_map[Tx]=nesting_table::ostack_top();
+			nesting_table::ostack_top()+=1;
+
+			emit(op_rel.type,expre_arith.global_ptr,expre_arith1.global_ptr,Tx.global_ptr);
+			expre_rel.global_ptr=nesting_table::nstack_top().get_global_ptr(Tx);
+			
+		}*/
+			
+			
+			Analyser::global_memory::alloc(1);
+			string Tx=Analyser::Tx_allocator::generate_str();
+			Analyser::nesting_table::nstack_top().var_map[Tx]=Analyser::nesting_table::ostack_top();
+			Analyser::nesting_table::ostack_top()+=1;
+
+			printf("(%s,#%d,#%d,#%d)\n",r_part[1].get_str("type"),r_part[0].get_int("global_ptr"),r_part[2].get_int("global_ptr"),Analyser::nesting_table::nstack_top().get_global_ptr(Tx));
+			
+			Analyser::attribute attri;
+			attri.set_value("global_ptr",Analyser::nesting_table::nstack_top().get_global_ptr(Tx));
+			
+			return attri;
+		}
+		Analyser::attribute ag62(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag62: factor ¡ú NUM
+		{
+			global_memory::alloc(1);
+			nesting_table::nstack_top().var_map[Tx]=nesting_table::ostack_top();
+			nesting_table::ostack_top()+=1;
+
+			emit(=,NUM.val,-,Tx);
+			factor.global_ptr=nesting_table::nstack_top().get_global_ptr(Tx);
+		}*/
+			Analyser::global_memory::alloc(1);
+			string Tx=Analyser::Tx_allocator::generate_str();
+			Analyser::nesting_table::nstack_top().var_map[Tx]=Analyser::nesting_table::ostack_top();
+			Analyser::nesting_table::ostack_top()+=1;
+
+			printf("(=,%d,-,#%d)\n",r_part[0].get_int("val"),Analyser::nesting_table::nstack_top().get_global_ptr(Tx));
+			
+			Analyser::attribute attri;
+			attri.set_value("global_ptr",Analyser::nesting_table::nstack_top().get_global_ptr(Tx));
+			
+			return attri;
+		}
 }
 
 

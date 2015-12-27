@@ -1,10 +1,26 @@
 #include "Analyser.h"
-
+#include <sstream>
 namespace Analyser
 {
 
 
-	
+	string quad_expression::toString()
+	{
+		if(!str_instance.empty())
+			return str_instance;
+
+		if(instance.empty())
+			return string("null quad expression");
+
+		string str;
+		for(int i=0;i<instance.size();i++)
+			str+=instance[i];
+		return str;
+	}
+
+	list<quad_expression> quad_expre_stream;
+
+
 	int attribute::get_int(const string& key)const
 	{
 		return (map<string,int>(this->int_instance))[key];
@@ -121,7 +137,8 @@ namespace Analyser
 		
 		
 	
-	nesting_table symbol_table;
+	nesting_table* symbol_table;
+
 	stack<nesting_table> nesting_table::nestptr_stack;
 	stack<int> nesting_table::offsetptr_stack;
 	
@@ -143,16 +160,47 @@ namespace Analyser
 		return mem[pos];
 	}
 	
-	
+	int Tx_allocator::index=0;
+	string Tx_allocator::generate_str()
+	{
+		string str("#T");
+		string index_str;
+		stringstream ss;
+		ss<<index;
+		ss>>index_str;
+		str+=index_str;
+		index++;
+		return str;
+	}
+
+
 	int nesting_table::get_global_ptr(const string& name)
 	{
-		return this->ptr+var_map[name];
+		if(var_map.find(name)!=var_map.end())
+			return this->ptr+var_map[name];
+		
+		nesting_table* tp;
+		tp=this->pre_table;
+		
+		while(true)
+		{
+			if(!tp)
+				break;
+
+			if(tp->var_map.find(name)!=tp->var_map.end())
+				return tp->var_map[name];
+			else
+				tp=tp->pre_table;
+		}
+		cout<<"variable "<<name<<" has not been defined."<<endl;
+		return -1;
 	}
 
 	void nesting_table::stack_init()
 	{
-		nstack_push(symbol_table);
+		nstack_push(nesting_table(0,NULL));
 		ostack_push(0);
+		symbol_table=&nstack_top();
 	}
 	void nesting_table::ostack_push(int ptr)
 	{
@@ -188,7 +236,7 @@ namespace Analyser
 	void LR_analyser::shift(int state_index,const APT_node& node)
 	{
 		LR_stack.push(stack_block(state_index,node));	
-
+		
 		//APT::constru_stack.push(APT_node(elem));
 	}
 	attribute LR_analyser::reduction(int produc_index,APT_node& father)
@@ -284,8 +332,8 @@ namespace Analyser
 				}
 			case LR1PG::action_type::reduction:
 				{
-					//Analyser::APT_node& father_node=*(new Analyser::APT_node());
 					Analyser::APT_node father_node;
+					
 
 					Analyser::attribute l_part_attri=reduction(act.index,father_node);
 					index_GOTO=LR_table.at(LR_stack.top().state_index,production_set[act.index].l_part).index;
@@ -320,7 +368,7 @@ namespace Analyser
 				break;
 		}
 		
-		Analyser::APT::root=*(new Analyser::APT_node(Analyser::APT::root));
+		
 
 
 	}
