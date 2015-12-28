@@ -2,7 +2,7 @@
 #include <sstream>
 namespace Analyser
 {
-
+	stack<LR1PG::action> act_stack;
 
 	string quad_expression::toString()
 	{
@@ -90,8 +90,12 @@ namespace Analyser
 	{
 	//if the attribute grammer has not been defined,
 	//return a null object
-			if(!(this->isAttriLoaded))
+			if((!(this->isAttriLoaded))&&(!(LR1PG::produc_set[this->gram_index].isWithEPSILON)))
 				return attribute();
+			//$$
+			//return attribute();
+			//$$
+			
 			
 			if(gram_index<attri_grams.size()&&attri_grams[gram_index])
 				return (attri_grams[gram_index])(r_part);
@@ -100,24 +104,27 @@ namespace Analyser
 	}
 	void ex_production::load_attributes(const vector<attribute>& attributes)
 	{
+		/*
 		if(r_part.size()!=attributes.size())		
 		{
 			cout<<"Param form does not match;"<<endl;
 			return;
 		}
-
+		*/
 		for(int i=0;i<r_part.size();i++)
 			r_part[i].set_attri(attributes[i]);
 		isAttriLoaded=true;
 	}
 	void ex_production::load_attributes(const vector<ex_element>& ex_elem_container)
 	{
+		/*
 		if(r_part.size()!=ex_elem_container.size())
 		{
 			cout<<"Param form does not match;"<<endl;
 			return;
-		}
+		}*/
 		this->r_part=ex_elem_container;
+		isAttriLoaded=true;
 	}
 
 	int ex_production::add_gram(attribute (*g)(const vector<ex_element>& r_part),int index)
@@ -139,7 +146,7 @@ namespace Analyser
 	
 	nesting_table* symbol_table;
 
-	stack<nesting_table> nesting_table::nestptr_stack;
+	stack<nesting_table* > nesting_table::nestptr_stack;
 	stack<int> nesting_table::offsetptr_stack;
 	
 	
@@ -198,9 +205,10 @@ namespace Analyser
 
 	void nesting_table::stack_init()
 	{
-		nstack_push(nesting_table(0,NULL));
+		
+		nstack_push(new nesting_table(0,NULL));
 		ostack_push(0);
-		symbol_table=&nstack_top();
+		symbol_table=nstack_top();
 	}
 	void nesting_table::ostack_push(int ptr)
 	{
@@ -216,15 +224,15 @@ namespace Analyser
 	}
 
 
-	void nesting_table::nstack_push(nesting_table t)
+	void nesting_table::nstack_push(nesting_table* pt)
 	{
-		nestptr_stack.push(t);
+		nestptr_stack.push(pt);
 	}
 	void nesting_table::nstack_pop()
 	{
 		nestptr_stack.pop();
 	}
-	nesting_table& nesting_table::nstack_top()
+	nesting_table* nesting_table::nstack_top()
 	{
 		return nestptr_stack.top();
 	}
@@ -241,18 +249,25 @@ namespace Analyser
 	}
 	attribute LR_analyser::reduction(int produc_index,APT_node& father)
 	{
+		act_stack.push(LR1PG::action(LR1PG::action_type::reduction,produc_index));
+
 		vector<Analyser::ex_element> ex_elem_container;
-	
+		
+
 		int num=production_set[produc_index].r_part_size;
+
+		for(int i=0;i<num;i++)
+			ex_elem_container.push_back(Analyser::ex_element());
+
 
 		//if it is X->. epsilon, the size does not mean the real length
 		if(production_set[produc_index].isWithEPSILON)
-			return	Analyser::attribute();
+			return Analyser::ex_produc_set[produc_index].call_attri_gram();
 
 
 		for(int i=0;i<num;i++)
 		{
-			ex_elem_container.push_back(LR_stack.top());
+			ex_elem_container[num-i-1]=LR_stack.top();
 			father.children.push_back(LR_stack.top());
 			LR_stack.pop();
 		}
@@ -325,6 +340,9 @@ namespace Analyser
 				{
 				//nodes shifted directly are leaf nodes
 					
+					
+					
+
 					shift(act.index,*ptr);
 					ptr++;
 					cout<<act.toString()<<endl;
@@ -332,6 +350,11 @@ namespace Analyser
 				}
 			case LR1PG::action_type::reduction:
 				{
+					//$$
+					if(act.index==22)
+						cout<<22<<endl;
+					//$$
+
 					Analyser::APT_node father_node;
 					
 

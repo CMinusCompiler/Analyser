@@ -169,6 +169,8 @@ namespace Analyser
 		{
 		//cannot be created as a null object
 			l_part=produc.l_part;
+			for(int i=0;i<produc.r_part.size();i++)
+				r_part.push_back(ex_element(produc.r_part[i]));
 			isAttriLoaded=false;
 		}
 		ex_production(const ex_production& produc)
@@ -227,7 +229,7 @@ namespace Analyser
 	//if the grammer is with multiple kinds of variable types, 
 	//it should be map<class x,int>(x is a class recording the name and type).
 		map<string,int> var_map;
-		list<nesting_table> nes_body_list;
+		list<nesting_table* > nes_body_list;
 		nesting_table* pre_table;
 		
 
@@ -261,9 +263,9 @@ namespace Analyser
 		static void ostack_pop();
 		static int& ostack_top();
 
-		static void nstack_push(nesting_table ptr);
+		static void nstack_push(nesting_table* pt);
 		static void nstack_pop();
-		static nesting_table& nstack_top();
+		static nesting_table* nstack_top();
 
 
 		
@@ -273,7 +275,7 @@ namespace Analyser
 		
 		static stack<int> offsetptr_stack;
 		//help record which nesting we are in
-		static stack<nesting_table> nestptr_stack;
+		static stack<nesting_table* > nestptr_stack;
 		
 	};
 	//the zeroth layer
@@ -316,4 +318,6 @@ namespace Analyser
 		void load_table(const string& file_name);
 		void analyse(const list<Analyser::ex_element>& ex_e_stream);
 	};
+
+	extern stack<LR1PG::action> act_stack;
 }
