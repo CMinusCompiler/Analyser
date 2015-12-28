@@ -28,8 +28,6 @@ namespace CM_attri_gram_set
 			
 			return Analyser::attribute();
 		}
-		
-
 		Analyser::attribute ag5(const vector<Analyser::ex_element>& r_part)
 		{
 		/*ag5: declar_var ¡ú type_var ID ;
@@ -76,6 +74,8 @@ namespace CM_attri_gram_set
 			nesting_table::nstack_pop();
 			nesting_table::ostack_pop();
 			enterproc(nesting_table::nstack_pop(),t);
+
+			compou_body.nextlist=code.nextlist;
 		}*/
 
 			Analyser::nesting_table* pt=Analyser::nesting_table::nstack_top();
@@ -86,11 +86,27 @@ namespace CM_attri_gram_set
 			Analyser::nesting_table::nstack_top()->nes_body_list.push_back(pt);
 
 			
-
+			Analyser::attribute attri;
+			attri.set_value("nextlist",r_part[3].get_int("nextlist"));
 			
 			
-			return Analyser::attribute();
+			return attri;
 		}
+
+		Analyser::attribute ag29(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag29: lines ¡ú compou_body
+		{
+			lines.nextlist=compou_body.nextlist;
+		}*/
+			
+			Analyser::attribute attri;
+			attri.set_value("nextlist",r_part[0].get_int("nextlist"));
+			
+			
+			return attri;
+		}
+
 
 		Analyser::attribute ag20(const vector<Analyser::ex_element>& r_part)
 		{
@@ -258,7 +274,18 @@ namespace CM_attri_gram_set
 			Analyser::nesting_table::nstack_top()->var_map[Tx]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=1;
 
+			
 			printf("(%s,#%d,#%d,#%d)\n",r_part[1].get_str("type").c_str(),r_part[0].get_int("global_ptr"),r_part[2].get_int("global_ptr"),Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
+			
+			char op[100];
+			char s1[100];
+			char s2[100];
+			char tar[100];
+			sprintf(op,"%s",r_part[1].get_str("type").c_str());
+			sprintf(s1,"#%d",r_part[0].get_int("global_ptr"));
+			sprintf(s2,"#%d",r_part[2].get_int("global_ptr"));
+			sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
+			Analyser::next_list::create_quad(op,s1,s2,tar);
 			
 			Analyser::attribute attri;
 			attri.set_value("global_ptr",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
@@ -273,6 +300,15 @@ namespace CM_attri_gram_set
 			expre.global_ptr=var.global_ptr;
 		}*/
 			printf("(=,#%d,-,#%d)\n",r_part[2].get_int(string("global_ptr")),r_part[0].get_int(string("global_ptr")));
+
+			
+			char s1[100];
+			char s2[100];
+			char tar[100];
+			sprintf(s1,"#%d",r_part[2].get_int(string("global_ptr")));
+			sprintf(tar,"#%d",r_part[0].get_int(string("global_ptr")));
+			Analyser::next_list::create_quad("=",s1,"-",tar);
+			
 			Analyser::attribute attri;
 			attri.set_value("global_ptr",r_part[0].get_int(string("global_ptr")));
 			return attri;
@@ -298,6 +334,16 @@ namespace CM_attri_gram_set
 
 
 			printf("([],#%d,#%d,#%d\n)",Analyser::nesting_table::nstack_top()->get_global_ptr(r_part[0].get_str(string("name"))),r_part[2].get_int(string("global_ptr")),Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
+
+			
+			char s1[100];
+			char s2[100];
+			char tar[100];
+			sprintf(s1,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(r_part[0].get_str(string("name"))));
+			sprintf(s2,"#%d",r_part[2].get_int(string("global_ptr")));
+			sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
+			Analyser::next_list::create_quad("#",s1,s2,tar);
+
 			Analyser::attribute attri;
 			attri.set_value(string("global_ptr"),Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
 			
@@ -395,6 +441,17 @@ namespace CM_attri_gram_set
 
 			printf("(%s,#%d,#%d,#%d)\n",r_part[1].get_str("type"),r_part[0].get_int("global_ptr"),r_part[2].get_int("global_ptr"),Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
 			
+			
+			char op[100];
+			char s1[100];
+			char s2[100];
+			char tar[100];
+			sprintf(op,"%s",r_part[1].get_str("type").c_str());
+			sprintf(s1,"#%d",r_part[0].get_int("global_ptr"));
+			sprintf(s2,"#%d",r_part[2].get_int("global_ptr"));
+			sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
+			Analyser::next_list::create_quad(op,s1,s2,tar);
+
 			Analyser::attribute attri;
 			attri.set_value("global_ptr",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
 			
@@ -421,6 +478,16 @@ namespace CM_attri_gram_set
 
 			printf("(%s,#%d,#%d,#%d)\n",r_part[1].get_str("type"),r_part[0].get_int("global_ptr"),r_part[2].get_int("global_ptr"),Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
 			
+			char op[100];
+			char s1[100];
+			char s2[100];
+			char tar[100];
+			sprintf(op,"%s",r_part[1].get_str("type").c_str());
+			sprintf(s1,"#%d",r_part[0].get_int("global_ptr"));
+			sprintf(s2,"#%d",r_part[2].get_int("global_ptr"));
+			sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
+			Analyser::next_list::create_quad(op,s1,s2,tar);
+
 			Analyser::attribute attri;
 			attri.set_value("global_ptr",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
 			
@@ -441,23 +508,179 @@ namespace CM_attri_gram_set
 			string Tx=Analyser::Tx_allocator::generate_str();
 			Analyser::nesting_table::nstack_top()->var_map[Tx]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=1;
-
+			
 			printf("(=,%d,-,#%d)\n",r_part[0].get_int("val"),Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
 			
+			
+			char s1[100];
+			char tar[100];
+			sprintf(s1,"%d",r_part[0].get_int("val"));
+			sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
+			Analyser::next_list::create_quad("=",s1,"-",tar);
+
 			Analyser::attribute attri;
+			//for the purpose of generilization, we "allocate space" for immediate number
 			attri.set_value("global_ptr",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
 			
 			return attri;
 		}
 
 
+
+
 		Analyser::attribute ag36(const vector<Analyser::ex_element>& r_part)
 		{
-		/*ag21: M ¡ú ¦Å
+		/*ag36: M ¡ú ¦Å
 		{
+			M.quad=nextquad;
 		}*/
-			//it does not need to return value
-			return Analyser::attribute();
+			Analyser::attribute attri;
+			attri.set_value("nextquad",Analyser::next_list::get_nextquad());
+
+
+			return attri;
+		}
+
+		Analyser::attribute ag35(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag35: N2 ¡ú ¦Å
+		{
+			N2.nextlist=makelist(nextquad);
+			emit(j,-,-,-);
+		}*/
+			Analyser::attribute attri;
+			attri.set_value("nextlist",(int)(new Analyser::next_list(Analyser::next_list::get_nextquad())));
+			printf("(j,-,-,-)\n");
+			Analyser::next_list::create_quad("j","-","-","-");
+
+			return attri;
+		}
+
+		Analyser::attribute ag23(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag23: code ¡ú code1 M lines
+		{
+			backpatch(code1.nextlist,M.quad);
+			code.nextlist=lines.nextlist;
+		}*/
+			
+			Analyser::next_list* p=(Analyser::next_list*)(r_part[0].get_int("nextlist"));
+			int quad=r_part[1].get_int("quad");
+			Analyser::next_list::back_patch(p,quad);
+
+			Analyser::attribute attri;
+			attri.set_value("nextlist",(int)(r_part[2].get_int("nextlist")));
+			return attri;
+		}
+		Analyser::attribute ag25(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag25: lines ¡ú lines_asg
+		{
+			lines.nextlist=makelist();
+		}*/
+			Analyser::attribute attri;
+			//using NULL means it does not need to be backpatched
+			attri.set_value("nextlist",NULL);
+			return attri;
+		}
+		Analyser::attribute ag28(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag28: lines ¡ú lines_return
+		{
+			lines.nextlist=makelist();
+		}*/
+			Analyser::attribute attri;
+			//using NULL means it does not need to be backpatched
+			attri.set_value("nextlist",NULL);
+			return attri;
+		}
+		Analyser::attribute ag26(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag26: lines ¡ú lines_select
+		{
+			lines.nextlist=lines_selct.nextlist;
+		}*/
+			Analyser::attribute attri;
+			//using NULL means it does not need to be backpatched
+			attri.set_value("nextlist",r_part[0].get_int("nextlist"));
+			return attri;
+		}
+		Analyser::attribute ag27(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag27: lines ¡ú lines_loop
+		{
+			lines.nextlist=lines_selct.nextlist;
+		}*/
+			Analyser::attribute attri;
+			//using NULL means it does not need to be backpatched
+			attri.set_value("nextlist",r_part[0].get_int("nextlist"));
+			return attri;
+		}
+
+		Analyser::attribute ag32(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag32: lines_select ¡ú if ( expre ) M lines
+		{
+			backpatch(expre.truelist,M.quad);
+			lines_select.nextlist=merge(expre.falselist,lines.nextlist);
+		}*/
+			Analyser::next_list* truelist=(Analyser::next_list*)(r_part[2].get_int("truelist"));
+			Analyser::next_list::back_patch(truelist,r_part[4].get_int("quad"));
+			
+			Analyser::next_list* falselist=(Analyser::next_list*)(r_part[2].get_int("falselist"));
+			Analyser::next_list* nextlist=(Analyser::next_list*)(r_part[5].get_int("nextlist"));
+			Analyser::attribute attri;
+			attri.set_value("nextlist",(int)(Analyser::next_list::merge(falselist,nextlist)));
+			return attri;
+		}
+		Analyser::attribute ag33(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag33: lines_select ¡ú if ( expre ) M lines N2 else M1 lines1
+		{
+			backpatch(expre.truelist,M.quad);
+			backpatch(expre.falselist,M1.quad);
+			lines_select.nextlist=merge(lines.nextlist,N2.nextlist,lines1.nextlist);
+		}*/
+
+			Analyser::next_list* truelist=(Analyser::next_list*)(r_part[2].get_int("truelist"));
+			Analyser::next_list::back_patch(truelist,r_part[4].get_int("quad"));
+			
+			Analyser::next_list* falselist=(Analyser::next_list*)(r_part[2].get_int("falselist"));
+			Analyser::next_list::back_patch(truelist,r_part[8].get_int("quad"));
+			
+			Analyser::next_list* lines_nextlist=(Analyser::next_list*)(r_part[5].get_int("nextlist"));
+			Analyser::next_list* N2_nextlist=(Analyser::next_list*)(r_part[6].get_int("nextlist"));
+			Analyser::next_list* lines1_nextlist=(Analyser::next_list*)(r_part[9].get_int("nextlist"));
+			Analyser::next_list* temp_ptr= Analyser::next_list::merge(lines_nextlist,N2_nextlist);
+			Analyser::attribute attri;
+			attri.set_value("nextlist",(int)(Analyser::next_list::merge(temp_ptr,lines1_nextlist)));
+			return attri;
+		}
+		Analyser::attribute ag34(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag34: lines_loop ¡ú while M ( expre ) M1 lines
+		{
+			backpatch(lines.nextlist,M.quad);
+			backpatch(expre.truelist,M1.quad);
+			lines_loop.nextlist=expre.falselist;
+			emit(j,-,-,M.quad);
+		}*/
+
+			
+			Analyser::next_list* lines_nextlist=(Analyser::next_list*)(r_part[6].get_int("nextlist"));
+			Analyser::next_list::back_patch(lines_nextlist,r_part[1].get_int("quad"));
+			
+			Analyser::next_list* truelist=(Analyser::next_list*)(r_part[3].get_int("truelist"));
+			Analyser::next_list::back_patch(truelist,r_part[5].get_int("quad"));
+			
+			Analyser::attribute attri;
+			attri.set_value("nextlist",(int)((Analyser::next_list*)(r_part[3].get_int("nextlist"))));
+
+			printf("(j,-,-,%d)",r_part[1].get_int("quad"));
+			char tar[100];
+			sprintf(tar,"%d",r_part[1].get_int("quad"));
+			Analyser::next_list::create_quad("j","-","-",tar);
+			return attri;
 		}
 
 		//without attribute grammer:

@@ -4,21 +4,62 @@ namespace Analyser
 {
 	stack<LR1PG::action> act_stack;
 
-	string quad_expression::toString()
+
+	int next_list::get_nextquad()
 	{
-		if(!str_instance.empty())
-			return str_instance;
-
-		if(instance.empty())
-			return string("null quad expression");
-
-		string str;
-		for(int i=0;i<instance.size();i++)
-			str+=instance[i];
+		return program_counter;
+	}
+	int next_list::alloc()
+	{
+		return program_counter++;
+	}
+	int next_list::program_counter=0;
+	string next_list::quad_expression::toString()
+	{
+		string str="("+dim[0]+","+dim[1]+","+dim[2]+","+dim[3]+")";
 		return str;
 	}
+	
+	
+	
+	void next_list::quad_expression::set(int i,const string& s)
+	{
+		this->dim[i]=s;
+	}
 
-	list<quad_expression> quad_expre_stream;
+	vector<next_list::quad_expression> next_list::quad_expres;
+
+	void next_list::create_quad(const char* op,const char* s1,const char* s2,const char* tar)
+	{
+		quad_expres.push_back(quad_expression(op,s1,s2,tar));
+	}
+
+	void next_list::back_patch(next_list* pnq,int tar_addr)
+	{
+		next_list* p=pnq;
+		while(p)
+		{
+			if(p->instr_addr<quad_expres.size())
+			{
+				stringstream ss;
+				ss<<tar_addr;
+				string addr;
+				ss>>addr;
+				quad_expres[p->instr_addr].set(4,addr);
+				p=p->post;
+			}
+		}
+	
+	}
+	next_list* next_list::merge(next_list* a,next_list* b)
+	{
+		next_list* p=a;
+		while(p->post)
+		{
+			p=p->post;
+		}
+		p->post=b;
+	}
 
 
 	int attribute::get_int(const string& key)const

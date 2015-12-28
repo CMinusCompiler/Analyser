@@ -7,34 +7,74 @@
 namespace Analyser
 {
 
-	class quad_expression
+	
+
+	class next_list
 	{
-	private:
-		vector<string> instance;
-		string str_instance;
 	public:
-		quad_expression(const string& op,const string& s1,const string& s2,const string& tar)
+		
+		static void create_quad(const char* op,const char* s1,const char* s2,const char* tar);
+		static void back_patch(next_list* pnq,int tar_addr);
+		static next_list* merge(next_list* a,next_list* b);
+		static int get_nextquad();
+
+		next_list(int instr_addr)
 		{
-			instance.push_back(op);
-			instance.push_back(s1);
-			instance.push_back(s2);
-			instance.push_back(tar);
+			this->instr_addr=instr_addr;
+			this->post=NULL;
 		}
-		quad_expression(const quad_expression& quad)
+		next_list(const next_list& nq)
 		{
-			instance=quad.instance;
+			this->instr_addr=nq.instr_addr;
+			this->post=nq.post;
 		}
-		quad_expression(const string& str)
+		next_list* post;
+		
+	private:
+		int instr_addr;
+		static int program_counter;
+		static int alloc();
+
+		class quad_expression
 		{
-			str_instance=str;
-		}
-		quad_expression(const char* str)
-		{
-			str_instance=string(str);
-		}
-		string toString();
+		private:
+		
+			string dim[4];
+			int instr_addr;
+			
+			
+		public:
+			
+		
+			quad_expression(const char* op,const char* s1,const char* s2,const char* tar)
+			{
+				dim[0]=op;
+				dim[1]=s1;
+				dim[2]=s2;
+				dim[3]=tar;
+			
+				instr_addr=alloc();
+			}
+
+			quad_expression(const quad_expression& quad)
+			{
+			
+				instr_addr=quad.instr_addr;
+			}
+			void set(int i,const string& s);
+
+			string toString();
+
+
+		};
+		
+		static vector<quad_expression> quad_expres;
+		
 
 	};
+
+
+
 
 	enum op_tpye
 	{
@@ -64,45 +104,7 @@ namespace Analyser
 		map<string,string> str_instance;
 	};
 
-	/*
-	class value
-	{
 	
-	public:
-		value(int num,const string& str)
-		{
-			setIntValue(0,0,num);
-			setStrValue(0,0,str);
-		}
-		value(int num)
-		{
-			setIntValue(0,0,num);
-		}
-		value(const string& str)
-		{
-			setStrValue(0,0,str);
-		}
-		value(){}
-		value(const value& v)
-		{
-			int_val_array=v.int_val_array;
-			str_val_array=v.str_val_array;
-		}
-		void setIntValue(int elem_index,int val_index,int value);
-		void setStrValue(int elem_index,int val_index,string str);
-		int getIntValue(int elem_index,int val_index) const;
-		string getStrValue(int elem_index,int val_index) const;
-		int getStrValElemArraySize()const;
-		int getIntValElemArraySize()const;
-		int getStrValVarArraySize(int index)const;
-		int getintValVarArraySize(int index)const;
-	private:
-		//the first dimension discribe the elem index
-		//the second dimension discribe the ith varible of the elem
-		vector<vector<int> > int_val_array;
-		vector<vector<string> > str_val_array;
-	};
-	*/
 
 	class ex_element:public LR1PG::element
 	{
