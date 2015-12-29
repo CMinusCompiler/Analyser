@@ -53,6 +53,8 @@ namespace Analyser
 		quad_expres.push_back(quad_expression(op,s1,s2,tar));
 	}
 
+
+
 	void next_list::back_patch(next_list* pnq,int tar_addr)
 	{
 		next_list* p=pnq;
@@ -209,8 +211,9 @@ namespace Analyser
 
 	stack<nesting_table* > nesting_table::nestptr_stack;
 	stack<int> nesting_table::offsetptr_stack;
-	
-	
+	stack<attribute> nesting_table::param_stack;
+	map<string,int> nesting_table::func_arg_num;
+
 	vector<int> global_memory::mem;
 	int global_memory::ptr=0;
 	int global_memory::get_ptr()
@@ -266,10 +269,16 @@ namespace Analyser
 
 	void nesting_table::stack_init()
 	{
-		
 		nstack_push(new nesting_table(0,NULL));
 		ostack_push(0);
 		symbol_table=nstack_top();
+
+		//create return_reg
+		Analyser::global_memory::alloc(1);
+		Analyser::nesting_table::nstack_top()->var_map["#return_reg"]=Analyser::nesting_table::ostack_top();
+		Analyser::nesting_table::ostack_top()+=1;
+
+			
 	}
 	void nesting_table::ostack_push(int ptr)
 	{
@@ -298,7 +307,28 @@ namespace Analyser
 		return nestptr_stack.top();
 	}
 	
-	
+
+	int nesting_table::pstack_size()
+	{
+		return param_stack.size();
+	}
+	bool nesting_table::pstack_is_empty()
+	{
+		return param_stack.empty();
+	}
+
+	void nesting_table::pstack_push(const attribute& attri)
+	{
+		param_stack.push(attri);
+	}
+	void nesting_table::pstack_pop()
+	{
+		param_stack.pop();
+	}
+	attribute& nesting_table::pstack_top()
+	{
+		return param_stack.top();
+	}
 
 
 

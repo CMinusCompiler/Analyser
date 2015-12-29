@@ -230,6 +230,8 @@ namespace Analyser
 		static string generate_str();
 	};
 
+	
+
 	class nesting_table
 	{
 	public:
@@ -274,12 +276,16 @@ namespace Analyser
 		static void nstack_pop();
 		static nesting_table* nstack_top();
 
+		static bool pstack_is_empty();
+		static int pstack_size();
+		static void pstack_push(const attribute& attri);
+		static void pstack_pop();
+		static attribute& pstack_top();
 
-		
+		static map<string,int> func_arg_num;	
 	private:
 		
-		
-		
+		static stack<attribute> param_stack;
 		static stack<int> offsetptr_stack;
 		//help record which nesting we are in
 		static stack<nesting_table* > nestptr_stack;
