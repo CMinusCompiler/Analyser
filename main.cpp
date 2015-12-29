@@ -298,6 +298,12 @@ namespace CM_attri_gram_set
 		{
 			emit(=,expre1.global_ptr,-,var.global_ptr);
 			expre.global_ptr=var.global_ptr;
+
+			expre.truelist=makelist(nextquad);
+			expre.falselist=makelist(nextquad);
+			emit(jnz,expre1.global_ptr,-,-);
+			emit(j,-,-,-);
+			
 		}*/
 			printf("(=,#%d,-,#%d)\n",r_part[2].get_int(string("global_ptr")),r_part[0].get_int(string("global_ptr")));
 
@@ -311,6 +317,19 @@ namespace CM_attri_gram_set
 			
 			Analyser::attribute attri;
 			attri.set_value("global_ptr",r_part[0].get_int(string("global_ptr")));
+
+			attri.set_value("truelist",(int)(new Analyser::next_list(Analyser::next_list::get_nextquad())));
+			attri.set_value("falselist",(int)(new Analyser::next_list(Analyser::next_list::get_nextquad()+1)));
+			
+			printf("(jnz,#%d,-,-)\n",r_part[0].get_int(string("global_ptr")));
+			sprintf(s1,"#%d",r_part[0].get_int(string("global_ptr")));
+			Analyser::next_list::create_quad("jnz",s1,"-","-");
+
+			printf("(j,-,-,-)\n");
+			Analyser::next_list::create_quad("j","-","-","-");
+
+
+
 			return attri;
 		}
 		
@@ -415,10 +434,33 @@ namespace CM_attri_gram_set
 		/*ag40: expre ¡ú expre_rel
 		{
 			expre.global_ptr=expre_rel.global_ptr;
+
+			expre.truelist=makelist(nextquad);
+			expre.falselist=makelist(nextquad);
+			emit(jnz,expre_rel.global_ptr,-,-);
+			emit(j,-,-,-);
 		}*/
 			Analyser::attribute attri;
 			attri.set_value(string("global_ptr"),r_part[0].get_int(string("global_ptr")));
+			
+
+			Analyser::next_list* p1=new Analyser::next_list(Analyser::next_list::get_nextquad());
+			Analyser::next_list* p2=new Analyser::next_list(Analyser::next_list::get_nextquad()+1);
+
+			attri.set_value("truelist",(int)p1);
+			attri.set_value("falselist",(int)p2);
+			
+			printf("(jnz,#%d,-,-)\n",r_part[0].get_int(string("global_ptr")));
+			char s1[100];
+			sprintf(s1,"#%d",r_part[0].get_int(string("global_ptr")));
+			Analyser::next_list::create_quad("jnz",s1,"-","-");
+
+			printf("(j,-,-,-)\n");
+			Analyser::next_list::create_quad("j","-","-","-");
+			
 			return attri;
+
+
 		}
 		Analyser::attribute ag55(const vector<Analyser::ex_element>& r_part)
 		{
@@ -535,7 +577,7 @@ namespace CM_attri_gram_set
 			M.quad=nextquad;
 		}*/
 			Analyser::attribute attri;
-			attri.set_value("nextquad",Analyser::next_list::get_nextquad());
+			attri.set_value("quad",Analyser::next_list::get_nextquad());
 
 
 			return attri;
@@ -748,14 +790,58 @@ void main()
 	{
 		Analyser::ex_production::add_gram(&CM_attri_gram_set::ag5,5);
 		Analyser::ex_produc_set[5].set_gram(5);
+		
 		Analyser::ex_production::add_gram(&CM_attri_gram_set::ag6,6);
 		Analyser::ex_produc_set[6].set_gram(6);
+		
 		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag19),19);
 		Analyser::ex_produc_set[19].set_gram(19);
+		
 		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag20),20);
 		Analyser::ex_produc_set[20].set_gram(20);
+		
 		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag21),21);
 		Analyser::ex_produc_set[21].set_gram(21);
+
+		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag22),22);
+		Analyser::ex_produc_set[22].set_gram(22);
+
+		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag23),23);
+		Analyser::ex_produc_set[23].set_gram(23);
+
+		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag24),24);
+		Analyser::ex_produc_set[24].set_gram(24);
+		
+		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag25),25);
+		Analyser::ex_produc_set[25].set_gram(25);
+		
+		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag26),26);
+		Analyser::ex_produc_set[26].set_gram(26);
+		
+		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag27),27);
+		Analyser::ex_produc_set[27].set_gram(27);
+		
+		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag28),28);
+		Analyser::ex_produc_set[28].set_gram(28);
+
+		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag29),29);
+		Analyser::ex_produc_set[29].set_gram(29);
+		
+		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag32),32);
+		Analyser::ex_produc_set[32].set_gram(32);
+		
+		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag33),33);
+		Analyser::ex_produc_set[33].set_gram(33);
+		
+		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag34),34);
+		Analyser::ex_produc_set[34].set_gram(34);
+		
+		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag35),35);
+		Analyser::ex_produc_set[35].set_gram(35);
+		
+		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag36),36);
+		Analyser::ex_produc_set[36].set_gram(36);
+		
 		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag39),39);
 		Analyser::ex_produc_set[39].set_gram(39);
 		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag40),40);
@@ -803,18 +889,15 @@ void main()
 		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag62),62);
 		Analyser::ex_produc_set[62].set_gram(62);
 
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag22),22);
-		Analyser::ex_produc_set[22].set_gram(22);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag24),24);
-		Analyser::ex_produc_set[24].set_gram(24);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag36),36);
-		Analyser::ex_produc_set[36].set_gram(36);
+		
+		
+		
 
 	}
 
 
 	//to get token_stream:
-	Lexer::load_code(string("a.cpp"));
+	Lexer::load_code(string("if.cpp"));
 	
 	//token_stream to elem_stream:
 	list<Analyser::ex_element> ex_elem_stream;
@@ -830,6 +913,8 @@ void main()
 	
 	CM_analyser.load_table(string("M_TABLE.txt"));
 	CM_analyser.analyse(ex_elem_stream);
+
+	//Analyser::next_list::clean_ntar_j();
 
 	/*
 	FILE* fp;

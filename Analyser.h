@@ -17,7 +17,7 @@ namespace Analyser
 		static void back_patch(next_list* pnq,int tar_addr);
 		static next_list* merge(next_list* a,next_list* b);
 		static int get_nextquad();
-
+		static void clean_ntar_j();
 		next_list(int instr_addr)
 		{
 			this->instr_addr=instr_addr;
@@ -58,11 +58,15 @@ namespace Analyser
 
 			quad_expression(const quad_expression& quad)
 			{
-			
+				dim[0]=quad.dim[0];
+				dim[1]=quad.dim[1];
+				dim[2]=quad.dim[2];
+				dim[3]=quad.dim[3];
+
 				instr_addr=quad.instr_addr;
 			}
 			void set(int i,const string& s);
-
+			string get(int i);
 			string toString();
 
 

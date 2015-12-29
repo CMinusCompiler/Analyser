@@ -20,7 +20,24 @@ namespace Analyser
 		return str;
 	}
 	
+	string next_list::quad_expression::get(int i)
+	{
+		return dim[i];
+	}
+
+	void next_list::clean_ntar_j()
+	{
+		vector<quad_expression>::iterator it=quad_expres.begin();
+		for(;it<quad_expres.end();)
+		{
+			if((('j'==(it->get(0))[0]))&&((string("-")==(it->get(3)))))
+				it=quad_expres.erase(it);
+			else
+				it++;
+		}
+		
 	
+	}
 	
 	void next_list::quad_expression::set(int i,const string& s)
 	{
@@ -45,7 +62,7 @@ namespace Analyser
 				ss<<tar_addr;
 				string addr;
 				ss>>addr;
-				quad_expres[p->instr_addr].set(4,addr);
+				quad_expres[p->instr_addr].set(3,addr);
 				p=p->post;
 			}
 		}
@@ -59,6 +76,8 @@ namespace Analyser
 			p=p->post;
 		}
 		p->post=b;
+
+		return a;
 	}
 
 
@@ -392,8 +411,8 @@ namespace Analyser
 			case LR1PG::action_type::reduction:
 				{
 					//$$
-					if(act.index==22)
-						cout<<22<<endl;
+					if(act.index==25)
+						cout<<25<<endl;
 					//$$
 
 					Analyser::APT_node father_node;
