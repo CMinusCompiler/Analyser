@@ -518,7 +518,7 @@ namespace CM_attri_gram_set
 			Analyser::nesting_table::nstack_top()->var_map[Tx]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=1;
 
-			printf("(%s,#%d,#%d,#%d)\n",r_part[1].get_str("type"),r_part[0].get_int("global_ptr"),r_part[2].get_int("global_ptr"),Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
+			printf("(%s,#%d,#%d,#%d)\n",r_part[1].get_str("type").c_str(),r_part[0].get_int("global_ptr"),r_part[2].get_int("global_ptr"),Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
 			
 			char op[100];
 			char s1[100];
@@ -622,7 +622,7 @@ namespace CM_attri_gram_set
 		}*/
 			Analyser::attribute attri;
 			//using NULL means it does not need to be backpatched
-			attri.set_value("nextlist",NULL);
+			attri.set_value("nextlist",(int)(new Analyser::next_list(Analyser::next_list::null_addr)));
 			return attri;
 		}
 		Analyser::attribute ag28(const vector<Analyser::ex_element>& r_part)
@@ -633,7 +633,7 @@ namespace CM_attri_gram_set
 		}*/
 			Analyser::attribute attri;
 			//using NULL means it does not need to be backpatched
-			attri.set_value("nextlist",NULL);
+			attri.set_value("nextlist",(int)(new Analyser::next_list(Analyser::next_list::null_addr)));
 			return attri;
 		}
 		Analyser::attribute ag26(const vector<Analyser::ex_element>& r_part)
@@ -643,7 +643,7 @@ namespace CM_attri_gram_set
 			lines.nextlist=lines_selct.nextlist;
 		}*/
 			Analyser::attribute attri;
-			//using NULL means it does not need to be backpatched
+			
 			attri.set_value("nextlist",r_part[0].get_int("nextlist"));
 			return attri;
 		}
@@ -654,7 +654,7 @@ namespace CM_attri_gram_set
 			lines.nextlist=lines_selct.nextlist;
 		}*/
 			Analyser::attribute attri;
-			//using NULL means it does not need to be backpatched
+			
 			attri.set_value("nextlist",r_part[0].get_int("nextlist"));
 			return attri;
 		}
@@ -716,7 +716,7 @@ namespace CM_attri_gram_set
 			Analyser::next_list::back_patch(truelist,r_part[5].get_int("quad"));
 			
 			Analyser::attribute attri;
-			attri.set_value("nextlist",(int)((Analyser::next_list*)(r_part[3].get_int("nextlist"))));
+			attri.set_value("nextlist",(int)((Analyser::next_list*)(r_part[3].get_int("falselist"))));
 
 			printf("(j,-,-,%d)",r_part[1].get_int("quad"));
 			char tar[100];
@@ -914,7 +914,7 @@ void main()
 	CM_analyser.load_table(string("M_TABLE.txt"));
 	CM_analyser.analyse(ex_elem_stream);
 
-	//Analyser::next_list::clean_ntar_j();
+	Analyser::next_list::clean_ntar_j();
 
 	/*
 	FILE* fp;

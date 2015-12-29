@@ -167,7 +167,8 @@ namespace Lexer
 			}
 			else 
 			{
-				//Retract();cout<<"#LTHAN,-"<<endl;
+				//cout<<"#LTHAN,-"<<endl;
+				Retract();
 				token_stream.push_back(token(string("<")));
 				
 				

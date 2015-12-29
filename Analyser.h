@@ -13,6 +13,7 @@ namespace Analyser
 	{
 	public:
 		
+		static int null_addr;
 		static void create_quad(const char* op,const char* s1,const char* s2,const char* tar);
 		static void back_patch(next_list* pnq,int tar_addr);
 		static next_list* merge(next_list* a,next_list* b);
@@ -262,7 +263,7 @@ namespace Analyser
 		//same as lookup() in text book
 		int get_global_ptr(const string& name);
 		
-		
+		static int NULL_ADDR;
 		static void stack_init();
 
 		static void ostack_push(int ptr);

@@ -14,6 +14,8 @@ namespace Analyser
 		return program_counter++;
 	}
 	int next_list::program_counter=0;
+	int next_list::null_addr=-1;
+
 	string next_list::quad_expression::toString()
 	{
 		string str="("+dim[0]+","+dim[1]+","+dim[2]+","+dim[3]+")";
@@ -56,15 +58,14 @@ namespace Analyser
 		next_list* p=pnq;
 		while(p)
 		{
-			if(p->instr_addr<quad_expres.size())
-			{
-				stringstream ss;
-				ss<<tar_addr;
-				string addr;
-				ss>>addr;
+			stringstream ss;
+			ss<<tar_addr;
+			string addr;
+			ss>>addr;
+			if(p->instr_addr>0)
 				quad_expres[p->instr_addr].set(3,addr);
-				p=p->post;
-			}
+			p=p->post;
+			
 		}
 	
 	}
@@ -260,7 +261,7 @@ namespace Analyser
 				tp=tp->pre_table;
 		}
 		cout<<"variable "<<name<<" has not been defined."<<endl;
-		return -1;
+		return NULL_ADDR;
 	}
 
 	void nesting_table::stack_init()
@@ -283,7 +284,7 @@ namespace Analyser
 		return offsetptr_stack.top();
 	}
 
-
+	int nesting_table::NULL_ADDR=-1;
 	void nesting_table::nstack_push(nesting_table* pt)
 	{
 		nestptr_stack.push(pt);
@@ -401,7 +402,6 @@ namespace Analyser
 				//nodes shifted directly are leaf nodes
 					
 					
-					
 
 					shift(act.index,*ptr);
 					ptr++;
@@ -410,13 +410,15 @@ namespace Analyser
 				}
 			case LR1PG::action_type::reduction:
 				{
-					//$$
-					if(act.index==25)
-						cout<<25<<endl;
-					//$$
+					
 
 					Analyser::APT_node father_node;
 					
+
+					//$$
+					if(act.index==23)
+						cout<<23<<endl;
+					//$$
 
 					Analyser::attribute l_part_attri=reduction(act.index,father_node);
 					index_GOTO=LR_table.at(LR_stack.top().state_index,production_set[act.index].l_part).index;
@@ -426,6 +428,13 @@ namespace Analyser
 
 					father_node=elem;
 					shift(index_GOTO,father_node);
+
+					//$$
+					if(index_GOTO==197)
+						cout<<197<<endl;
+					//$$
+					
+
 
 					Analyser::APT::root=father_node;
 
