@@ -324,12 +324,14 @@ namespace Analyser
 		void shift(int state_index,const APT_node& node);
 		attribute reduction(int produc_index,APT_node& father);
 		virtual void conflict_management(const list<Analyser::ex_element>& elem_stream,const list<Analyser::ex_element>::const_iterator& ptr,LR1PG::action& act)=0;
-		
+		virtual void load_ags()=0;
+		list<Analyser::ex_element>::const_iterator ptr;
 
 	public:
 		void load_productions(const string& file_name);
 		void load_table(const string& file_name);
 		void analyse(const list<Analyser::ex_element>& ex_e_stream);
+		list<Analyser::ex_element>::const_iterator& get_ptr();
 	};
 
 	extern stack<LR1PG::action> act_stack;

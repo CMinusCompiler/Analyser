@@ -273,12 +273,19 @@ namespace Analyser
 		ostack_push(0);
 		symbol_table=nstack_top();
 
-		//create return_reg
-		Analyser::global_memory::alloc(1);
-		Analyser::nesting_table::nstack_top()->var_map["#return_reg"]=Analyser::nesting_table::ostack_top();
-		Analyser::nesting_table::ostack_top()+=1;
-
-			
+		//create return_w_reg for return phrases
+		global_memory::alloc(1);
+		nesting_table::nstack_top()->var_map["#return_w_reg"]=Analyser::nesting_table::ostack_top();
+		nesting_table::ostack_top()+=1;
+		//create return_r_reg for invoke phrases
+		global_memory::alloc(1);
+		nesting_table::nstack_top()->var_map["#return_r_reg"]=Analyser::nesting_table::ostack_top();
+		nesting_table::ostack_top()+=1;
+		//create return_addr_reg;
+		global_memory::alloc(1);
+		nesting_table::nstack_top()->var_map["#return_addr_reg"]=Analyser::nesting_table::ostack_top();
+		nesting_table::ostack_top()+=1;
+		
 	}
 	void nesting_table::ostack_push(int ptr)
 	{
@@ -331,7 +338,10 @@ namespace Analyser
 	}
 
 
-
+	list<Analyser::ex_element>::const_iterator& LR_analyser::get_ptr()
+	{
+		return ptr;
+	}
 	void LR_analyser::shift(int state_index,const APT_node& node)
 	{
 		LR_stack.push(stack_block(state_index,node));	
@@ -398,7 +408,7 @@ namespace Analyser
 		//We need to put # at the end of elem_stream.
 		elem_stream.push_back(Analyser::ex_element(false,ter_list[string("#")],Analyser::attribute()));
 
-		list<Analyser::ex_element>::const_iterator ptr=elem_stream.begin();
+		ptr=elem_stream.begin();
 		int index_GOTO;
 
 		
@@ -446,8 +456,8 @@ namespace Analyser
 					
 
 					//$$
-					if(act.index==23)
-						cout<<23<<endl;
+					if(act.index==55)
+						cout<<55<<endl;
 					//$$
 
 					Analyser::attribute l_part_attri=reduction(act.index,father_node);

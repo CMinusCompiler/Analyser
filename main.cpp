@@ -3,6 +3,288 @@
 #include "Analyser.h"
 #include <stack>
 
+namespace CM_attri_gram_set
+{
+		Analyser::attribute ag3(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag5(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag6(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag8(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag9(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag10(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag4(const vector<Analyser::ex_element>& r_part);
+
+		Analyser::attribute ag11(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag67(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag66(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag64(const vector<Analyser::ex_element>& r_part);
+		
+		Analyser::attribute ag65(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag63(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag39(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag38(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag37(const vector<Analyser::ex_element>& r_part);
+		
+		Analyser::attribute ag16(const vector<Analyser::ex_element>& r_part);
+		
+		Analyser::attribute ag17(const vector<Analyser::ex_element>& r_part);
+		
+		Analyser::attribute ag18(const vector<Analyser::ex_element>& r_part);
+		
+		Analyser::attribute ag61(const vector<Analyser::ex_element>& r_part);
+		
+		Analyser::attribute ag19(const vector<Analyser::ex_element>& r_part);
+		
+		Analyser::attribute ag29(const vector<Analyser::ex_element>& r_part);
+		
+
+		Analyser::attribute ag20(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag21(const vector<Analyser::ex_element>& r_part);
+		
+		Analyser::attribute ag53(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag54(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag57(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag58(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag45(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag46(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag47(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag48(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag49(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag50(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag51(const vector<Analyser::ex_element>& r_part);
+			
+		Analyser::attribute ag42(const vector<Analyser::ex_element>& r_part);
+		
+		Analyser::attribute ag41(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag52(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag56(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag60(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag59(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag44(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag40(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag55(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag43(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag62(const vector<Analyser::ex_element>& r_part);
+		
+		Analyser::attribute ag36(const vector<Analyser::ex_element>& r_part);
+		
+		Analyser::attribute ag35(const vector<Analyser::ex_element>& r_part);
+		
+		Analyser::attribute ag23(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag25(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag28(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag26(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag27(const vector<Analyser::ex_element>& r_part);
+		
+		Analyser::attribute ag32(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag33(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag34(const vector<Analyser::ex_element>& r_part);
+		//without attribute grammer:
+		Analyser::attribute ag22(const vector<Analyser::ex_element>& r_part);
+		Analyser::attribute ag24(const vector<Analyser::ex_element>& r_part);
+		
+
+}
+
+class CM_LR_analyser:public Analyser::LR_analyser
+{
+public:
+	void conflict_management(const list<Analyser::ex_element>& elem_stream,const list<Analyser::ex_element>::const_iterator& ptr,LR1PG::action& act)override
+	{
+			//add conflict management meotheds here
+			if((LR_stack.top().state_index==8)&&(ptr->toString()=="ID"))
+			{
+			//Conflicts at (I8,ID):r7 vs. r9
+				list<Analyser::ex_element>::const_iterator it=ptr;
+				it++;
+				
+				if((it!=elem_stream.end())&&((it->toString())=="("))
+					act.index=9;
+				else
+					act.index=7;
+			}
+			if(LR_stack.top().state_index==307 && (ptr->toString()=="else"))
+			{
+			//Conflicts at (I307,else):r32 vs. r35
+				act.type=LR1PG::action_type::reduction;
+				act.index=35;
+			}
+	}
+	void load_ags()override
+	{
+		for(int i=0;i<LR1PG::produc_set.size();i++)
+		{
+			LR1PG::produc_set[i];
+		
+			Analyser::ex_production produc(LR1PG::produc_set[i]);
+			Analyser::ex_produc_set.push_back(produc);
+		}
+		{
+
+			Analyser::ex_production::add_gram(&CM_attri_gram_set::ag3,3);
+			Analyser::ex_produc_set[3].set_gram(3);
+
+			Analyser::ex_production::add_gram(&CM_attri_gram_set::ag4,4);
+			Analyser::ex_produc_set[4].set_gram(4);
+		
+			Analyser::ex_production::add_gram(&CM_attri_gram_set::ag5,5);
+			Analyser::ex_produc_set[5].set_gram(5);
+		
+			Analyser::ex_production::add_gram(&CM_attri_gram_set::ag6,6);
+			Analyser::ex_produc_set[6].set_gram(6);
+
+			Analyser::ex_production::add_gram(&CM_attri_gram_set::ag8,8);
+			Analyser::ex_produc_set[8].set_gram(8);
+		
+			Analyser::ex_production::add_gram(&CM_attri_gram_set::ag9,9);
+			Analyser::ex_produc_set[9].set_gram(9);
+
+			Analyser::ex_production::add_gram(&CM_attri_gram_set::ag10,10);
+			Analyser::ex_produc_set[10].set_gram(10);
+
+			Analyser::ex_production::add_gram(&CM_attri_gram_set::ag11,11);
+			Analyser::ex_produc_set[11].set_gram(11);
+
+			Analyser::ex_production::add_gram(&CM_attri_gram_set::ag16,16);
+			Analyser::ex_produc_set[16].set_gram(16);
+
+			Analyser::ex_production::add_gram(&CM_attri_gram_set::ag17,17);
+			Analyser::ex_produc_set[17].set_gram(17);
+
+			Analyser::ex_production::add_gram(&CM_attri_gram_set::ag18,18);
+			Analyser::ex_produc_set[18].set_gram(18);
+
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag19),19);
+			Analyser::ex_produc_set[19].set_gram(19);
+		
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag20),20);
+			Analyser::ex_produc_set[20].set_gram(20);
+		
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag21),21);
+			Analyser::ex_produc_set[21].set_gram(21);
+
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag22),22);
+			Analyser::ex_produc_set[22].set_gram(22);
+
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag23),23);
+			Analyser::ex_produc_set[23].set_gram(23);
+
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag24),24);
+			Analyser::ex_produc_set[24].set_gram(24);
+		
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag25),25);
+			Analyser::ex_produc_set[25].set_gram(25);
+		
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag26),26);
+			Analyser::ex_produc_set[26].set_gram(26);
+		
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag27),27);
+			Analyser::ex_produc_set[27].set_gram(27);
+		
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag28),28);
+			Analyser::ex_produc_set[28].set_gram(28);
+
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag29),29);
+			Analyser::ex_produc_set[29].set_gram(29);
+
+
+		
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag32),32);
+			Analyser::ex_produc_set[32].set_gram(32);
+		
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag33),33);
+			Analyser::ex_produc_set[33].set_gram(33);
+		
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag34),34);
+			Analyser::ex_produc_set[34].set_gram(34);
+		
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag35),35);
+			Analyser::ex_produc_set[35].set_gram(35);
+		
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag36),36);
+			Analyser::ex_produc_set[36].set_gram(36);
+
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag37),37);
+			Analyser::ex_produc_set[37].set_gram(37);
+
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag38),38);
+			Analyser::ex_produc_set[38].set_gram(38);
+		
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag39),39);
+			Analyser::ex_produc_set[39].set_gram(39);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag40),40);
+			Analyser::ex_produc_set[40].set_gram(40);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag41),41);
+			Analyser::ex_produc_set[41].set_gram(41);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag42),42);
+			Analyser::ex_produc_set[42].set_gram(42);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag43),43);
+			Analyser::ex_produc_set[43].set_gram(43);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag44),44);
+			Analyser::ex_produc_set[44].set_gram(44);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag45),45);
+			Analyser::ex_produc_set[45].set_gram(45);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag46),46);
+			Analyser::ex_produc_set[46].set_gram(46);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag47),47);
+			Analyser::ex_produc_set[47].set_gram(47);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag48),48);
+			Analyser::ex_produc_set[48].set_gram(48);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag49),49);
+			Analyser::ex_produc_set[49].set_gram(49);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag50),50);
+			Analyser::ex_produc_set[50].set_gram(50);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag51),51);
+			Analyser::ex_produc_set[51].set_gram(51);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag52),52);
+			Analyser::ex_produc_set[52].set_gram(52);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag53),53);
+			Analyser::ex_produc_set[53].set_gram(53);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag54),54);
+			Analyser::ex_produc_set[54].set_gram(54);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag55),55);
+			Analyser::ex_produc_set[55].set_gram(55);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag56),56);
+			Analyser::ex_produc_set[56].set_gram(56);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag57),57);
+			Analyser::ex_produc_set[57].set_gram(57);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag58),58);
+			Analyser::ex_produc_set[58].set_gram(58);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag59),59);
+			Analyser::ex_produc_set[59].set_gram(59);
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag60),60);
+			Analyser::ex_produc_set[60].set_gram(60);
+
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag61),61);
+			Analyser::ex_produc_set[61].set_gram(61);
+
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag62),62);
+			Analyser::ex_produc_set[62].set_gram(62);
+
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag63),63);
+			Analyser::ex_produc_set[63].set_gram(63);
+
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag63),63);
+			Analyser::ex_produc_set[63].set_gram(63);
+
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag64),64);
+			Analyser::ex_produc_set[64].set_gram(64);
+
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag65),65);
+			Analyser::ex_produc_set[65].set_gram(65);
+
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag66),66);
+			Analyser::ex_produc_set[66].set_gram(66);
+
+			Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag67),67);
+			Analyser::ex_produc_set[67].set_gram(67);
+
+		
+		
+		
+
+		}
+	}
+}CM_analyser;
 
 namespace CM_attri_gram_set
 {
@@ -70,59 +352,70 @@ namespace CM_attri_gram_set
 		{
 		/*ag8: declar_func ¡ú type_func ID ( params ) compou_body;
 		{
-			declar_func.width=1;
-			declar_func.name=ID.name;
-			declar_func.func_addr=params.func_addr;
-
-			func_arg_num[ID.name]=compou_body.arg_num;
+		}*/
+	
+			//it does not need to return attribute
+			return Analyser::attribute();
+		}
+	
+		
+		Analyser::attribute ag9(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag9: type_func ¡ú int
+		{
+			param_stack.push(("func_name",Analyser::LR_analyser::ptr));
 		}*/
 		//in CM, there is not other types except int
 		//the declar_var.type attribute is not used here
 		//and the memory unit is int 
 			Analyser::attribute attri;
-			
-			attri.set_value("name",r_part[1].get_str("name"));
-			attri.set_value("width",1);
-			attri.set_value("func_addr",r_part[3].get_int("func_addr"));
-
-			Analyser::nesting_table::func_arg_num[r_part[1].get_str("name")]=r_part[5].get_int("arg_num");
-
-			return attri;
+			attri.set_value("func_name",CM_analyser.get_ptr()->get_str("name"));
+			Analyser::nesting_table::pstack_push(attri);
+ 			
+			//it does not need to return attribute
+			return Analyser::attribute();
 		}
+
+		Analyser::attribute ag10(const vector<Analyser::ex_element>& r_part)
+		{
+		/*ag10: type_func ¡ú void
+		{
+			param_stack.push(("func_name",Analyser::LR_analyser::ptr+1));
+		}*/
+		//in CM, there is not other types except int
+		//the declar_var.type attribute is not used here
+		//and the memory unit is int 
+			Analyser::attribute attri;
+			attri.set_value("func_name",CM_analyser.get_ptr()->get_str("name"));
+			Analyser::nesting_table::pstack_push(attri);
+ 			
+			//it does not need to return attribute
+			return Analyser::attribute();
+		}
+		
 
 		Analyser::attribute ag4(const vector<Analyser::ex_element>& r_part)
 		{
 		/*ag4: declar ¡ú declar_func
 		{
-			enter(declar_func.name,declar_func.func_addr);
-			offset=offset+declar_func.width;
-			enter(nesting_table::nstack_top(),declar_func.name,nesting_table::ostack_top());
-			nesting_table::ostack_top()+=declar_func.width;
 		}*/
 		//in CM, there is not other types except int
 		//the declar_var.type attribute is not used here
-			string name=r_part[0].get_str("name");
-			int width=r_part[0].get_int("width");
-
-			Analyser::global_memory::alloc(width);
-			Analyser::nesting_table::nstack_top()->var_map[name]=r_part[0].get_int("func_addr");
-			Analyser::nesting_table::ostack_top()+=width;
-
 			
 			//it does not need to return value
 			return Analyser::attribute();
 		}
 
+
+
 		Analyser::attribute ag11(const vector<Analyser::ex_element>& r_part)
 		{
 		/*ag11: params ¡ú param_list
 		{
-			params.func_addr=nextquad;
+			
 		}*/
-		
-			Analyser::attribute attri;
-			attri.set_value("func_addr",Analyser::next_list::get_nextquad());
-			return attri;
+			//it does not need to return value
+			return Analyser::attribute();
 		}
 
 
@@ -135,7 +428,7 @@ namespace CM_attri_gram_set
 		}*/
 			Analyser::attribute attri;
 			attri.set_value("num",1);
-			attri.set_value("T0",r_part[0].get_str("global_ptr"));
+			attri.set_value("T0",r_part[0].get_int("global_ptr"));
 			return attri;
 		}
 		Analyser::attribute ag66(const vector<Analyser::ex_element>& r_part)
@@ -158,7 +451,7 @@ namespace CM_attri_gram_set
 			}
 			char Tx[100];
 			sprintf(Tx,"T%d",arg_list1_num);
-			attri.set_value(Tx,r_part[2].get_str("global_ptr"));
+			attri.set_value(Tx,r_part[2].get_int("global_ptr"));
 			return attri;
 		}
 		Analyser::attribute ag64(const vector<Analyser::ex_element>& r_part)
@@ -208,21 +501,12 @@ namespace CM_attri_gram_set
 
 			emit(s_tope,num,-,2);//3[TOP]=SP
 
-			emit(j,-,-,nesting_table.var_map[ID.name]);//JSR P
+			emit(=,get_nexquad()+1,-,#return_addr_reg);//get_nextquad()+1 means the next quad after JSR P
+			
+			emit(j,-,-,symbol_table->var_map[ID.name]);//JSR P
 
 			//
-			emit(g_top,-,-Tx);
 			
-			global_memory::alloc(1);//for storing TOP
-			nesting_table::nstack_top().var_map[T(x+1)]=nesting_table::ostack_top();
-			nesting_table::ostack_top()+=1;
-
-			emit(+,Tx,1,T(x+1));
-			emit(s_sp,T(x+1),-,-);//SP=TOP+1
-			emit(s_spe,return_addr,-,1);//1[SP]=return_addr
-			
-			emit(+,Tx,nesting_table.func_arg_num[ID.name],T(x+1));
-			emit(s_top,T(x+1),-,-);
 
 		}*/
 			
@@ -239,7 +523,7 @@ namespace CM_attri_gram_set
 			{
 				char Ti[100];
 				sprintf(Ti,"T%d",i);
-				printf("s_tope,#%d,-,%d",r_part[2].get_int(Ti),i+4);
+				printf("(s_tope,#%d,-,%d)\n",r_part[2].get_int(Ti),i+4);
 				sprintf(s1,"#%d",r_part[2].get_int(Ti));
 				sprintf(tar,"%d",i+4);
 				Analyser::next_list::create_quad("s_tope",s1,"-",tar);
@@ -265,44 +549,30 @@ namespace CM_attri_gram_set
 			sprintf(s1,"%d",num);
 			Analyser::next_list::create_quad("s_tope",s1,"-","3");
 
+			
+			printf("(=,%d,-,#%d)\n",Analyser::next_list::get_nextquad()+1,Analyser::symbol_table->var_map["#return_addr_reg"]);
+			sprintf(s1,"%d",Analyser::next_list::get_nextquad()+1);
+			sprintf(tar,"%d",Analyser::symbol_table->var_map["#return_addr_reg"]);
+			Analyser::next_list::create_quad("=",s1,"-",tar);
 
-			printf("(j,-,-,%d)\n",Analyser::symbol_table->var_map[name]);
-			sprintf(tar,"%d",Analyser::symbol_table->var_map[name]);//functions must have been defined in 0th layer
-			Analyser::next_list::create_quad("j","-","-",tar);
-			
-			//
-			printf("(g_top,-,-,#%d)",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
-			sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
-			Analyser::next_list::create_quad("g_top","-","-",tar);
-			
-			Analyser::global_memory::alloc(1);
-			string Tx1=Analyser::Tx_allocator::generate_str();
-			Analyser::nesting_table::nstack_top()->var_map[Tx1]=Analyser::nesting_table::ostack_top();
-			Analyser::nesting_table::ostack_top()+=1;
 
-			printf("(+,#%d,1,#%d)",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx),Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
-			sprintf(s1,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
-			sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
-			Analyser::next_list::create_quad("+",s1,"-",tar);
-			
-			printf("(s_sp,#%d,-,-)",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
-			sprintf(s1,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
-			Analyser::next_list::create_quad("s_sp",s1,"-","-");
-			
-			
-			printf("(s_spe,%d,-,1)",Analyser::next_list::get_nextquad());
-			sprintf(s1,"%d",Analyser::next_list::get_nextquad());
-			Analyser::next_list::create_quad("s_sp",s1,"-","-");
-			
-			printf("(+,#%d,%d,#%d)",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx),Analyser::nesting_table::func_arg_num[name]+4,Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
-			sprintf(s1,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
-			sprintf(s1,"%d",Analyser::nesting_table::func_arg_num[name]+4);
-			sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
-			Analyser::next_list::create_quad("+",s1,"-",tar);
-			
-			printf("(s_top,#%d,-,-)",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
-			sprintf(s1,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
-			Analyser::next_list::create_quad("s_top",s1,"-","-");
+
+			if(Analyser::symbol_table->var_map.find(name)!=Analyser::symbol_table->var_map.end())
+			{
+				printf("(j,-,-,%d)\n",Analyser::symbol_table->var_map[name]);
+				sprintf(tar,"%d",Analyser::symbol_table->var_map[name]);//functions must have been defined in 0th layer
+				Analyser::next_list::create_quad("j","-","-",tar);
+
+				cout<<"Invoking procedure "<<name<<endl;
+			}
+			else
+			{
+				cout<<"Function "<<name<<" has not been defined."<<endl;
+				printf("(j,-,-,-1)\n");
+				Analyser::next_list::create_quad("j","-","-","-1");
+			}
+
+
 			
 			
 			//it does not need to return value
@@ -313,7 +583,7 @@ namespace CM_attri_gram_set
 		{
 		/*ag38: lines_return ¡ú return expre ;
 		{
-			emit(=,expre.global_ptr,-,#return_reg.global_ptr);
+			emit(=,expre.global_ptr,-,#return_w_reg.global_ptr);
 	
 			global_memory::alloc(1);//for storing sp
 			nesting_table::nstack_top().var_map[Tx]=nesting_table::ostack_top();//(here Tx is different form Ti)
@@ -339,9 +609,9 @@ namespace CM_attri_gram_set
 			char tar[100];
 
 			
-			printf("(=,#%d,-,#%d)\n",r_part[1].get_int("global_ptr"),Analyser::symbol_table->var_map["#return_reg"]);
+			printf("(=,#%d,-,#%d)\n",r_part[1].get_int("global_ptr"),Analyser::symbol_table->var_map["#return_w_reg"]);
 			sprintf(s1,"#%d",r_part[1].get_int("global_ptr"));
-			sprintf(tar,"#%d",Analyser::symbol_table->var_map["#return_reg"]);
+			sprintf(tar,"#%d",Analyser::symbol_table->var_map["#return_w_reg"]);
 			Analyser::next_list::create_quad("=",s1,"-",tar);
 
 
@@ -387,7 +657,7 @@ namespace CM_attri_gram_set
 			sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
 			Analyser::next_list::create_quad("j","-","-",tar);
 
-
+			cout<<"returned from procedure"<<endl;
 			
 			
 			//it does not need to return value
@@ -463,6 +733,7 @@ namespace CM_attri_gram_set
 			sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
 			Analyser::next_list::create_quad("j","-","-",tar);
 
+			cout<<"returned from procedure"<<endl;
 
 			
 			
@@ -535,14 +806,13 @@ namespace CM_attri_gram_set
 		{
 		/*ag61: factor ¡ú call 
 		{
-			factor.global_ptr=#return_reg.global_ptr
+			factor.global_ptr=#return_r_reg.global_ptr
 		}*/
 		
 			Analyser::attribute attri;
-			attri.set_value("global_ptr",Analyser::symbol_table->get_global_ptr("#return_reg"));
+			attri.set_value("global_ptr",Analyser::symbol_table->get_global_ptr("#return_r_reg"));
 			
-			//it does not need to return attribute
-			return Analyser::attribute();
+			return attri;
 		}
 	
 
@@ -557,8 +827,6 @@ namespace CM_attri_gram_set
 			enterproc(nesting_table::nstack_pop(),t);
 			
 			compou_body.nextlist=code.nextlist;
-
-			compou_body.arg_num=N1.arg_num;
 		}*/
 
 			Analyser::nesting_table* pt=Analyser::nesting_table::nstack_top();
@@ -570,8 +838,6 @@ namespace CM_attri_gram_set
 
 			Analyser::attribute attri;
 			attri.set_value("nextlist",r_part[3].get_int("nextlist"));
-			attri.set_value("arg_num",r_part[1].get_int("arg_num"));
-			
 			return attri;
 		}
 
@@ -600,9 +866,26 @@ namespace CM_attri_gram_set
 
 			N1.arg_num=param_stack.size();
 
-			if(!param_stack.is_empty())//initialize the params
+			if(!param_stack.is_empty())//initialize the params, meanwhile enterring this means it is a procedure
 			{
 				size=param_stack.size();
+
+				//
+				emit(g_top,-,-Tx);
+			
+				global_memory::alloc(1);//for storing TOP
+				nesting_table::nstack_top().var_map[T(x+1)]=nesting_table::ostack_top();
+				nesting_table::ostack_top()+=1;
+
+				emit(+,Tx,1,T(x+1));
+				emit(s_sp,T(x+1),-,-);//SP=TOP+1
+				emit(s_spe,#return_addr_reg,-,1);//1[SP]=return_addr
+			
+				emit(+,Tx,size-1+3,T(x+1));
+				emit(s_top,T(x+1),-,-);//TOP=TOP+L
+				//
+
+			
 				for(int i=size-1;i>0;i--)
 				{
 					enter(param_stack.top().name,offset);
@@ -615,6 +898,13 @@ namespace CM_attri_gram_set
 					
 					param_stack.pop();
 				}
+				func_name=nesting_table::pstack_top().get_str("func_name");
+				func_arg_num[func_name]=size-1;
+
+				symbol_table->var_map[func_name]=get_next_addr();
+				offset=offset+declar_func.width;
+				enter(nesting_table::nstack_top(),declar_func.name,nesting_table::ostack_top());
+				nesting_table::ostack_top()+=1;
 			}
 			
 
@@ -625,8 +915,55 @@ namespace CM_attri_gram_set
 
 			if(!Analyser::nesting_table::pstack_is_empty())
 			{
+				
+				char op[100];
+				char s1[100];
+				char s2[100];
+				char tar[100];
+
 				int size=Analyser::nesting_table::pstack_size();
-				for(int i=size-1;i>0;i--)
+
+				//below are quads for stack pushing just after enterring this procedure
+				Analyser::global_memory::alloc(1);
+				string Tx=Analyser::Tx_allocator::generate_str();
+				Analyser::nesting_table::nstack_top()->var_map[Tx]=Analyser::nesting_table::ostack_top();
+				Analyser::nesting_table::ostack_top()+=1;
+
+				printf("(g_top,-,-,#%d)\n",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
+				sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
+				Analyser::next_list::create_quad("g_top","-","-",tar);
+			
+				Analyser::global_memory::alloc(1);
+				string Tx1=Analyser::Tx_allocator::generate_str();
+				Analyser::nesting_table::nstack_top()->var_map[Tx1]=Analyser::nesting_table::ostack_top();
+				Analyser::nesting_table::ostack_top()+=1;
+
+				printf("(+,#%d,1,#%d)\n",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx),Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
+				sprintf(s1,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
+				sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
+				Analyser::next_list::create_quad("+",s1,"-",tar);
+			
+				printf("(s_sp,#%d,-,-)\n",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
+				sprintf(s1,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
+				Analyser::next_list::create_quad("s_sp",s1,"-","-");
+			
+			
+				printf("(s_spe,#%d,-,1)\n",Analyser::symbol_table->var_map["#return_addr_reg"]);
+				sprintf(s1,"%d",Analyser::symbol_table->var_map["#return_addr_reg"]);
+				Analyser::next_list::create_quad("s_spe",s1,"-","-");
+			
+				printf("(+,#%d,%d,#%d)\n",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx),size-1+3,Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
+				sprintf(s1,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
+				sprintf(s1,"%d",size-1+3);
+				sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
+				Analyser::next_list::create_quad("+",s1,"-",tar);
+			
+				printf("(s_top,#%d,-,-)\n",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
+				sprintf(s1,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
+				Analyser::next_list::create_quad("s_top",s1,"-","-");
+				//
+
+				for(int i=size-1;i>0;i--)//initialize the params
 				{
 					string name=Analyser::nesting_table::pstack_top().get_str("name");
 					int width=Analyser::nesting_table::pstack_top().get_int("width");
@@ -634,18 +971,27 @@ namespace CM_attri_gram_set
 					Analyser::global_memory::alloc(width);
 					Analyser::nesting_table::nstack_top()->var_map[name]=Analyser::nesting_table::ostack_top();
 					
-					printf("g_spe,3+%d,-,#%d",i,Analyser::nesting_table::ostack_top());
-					char s1[100];
-					char tar[100];
-					sprintf(s1,"3+%d",i);
-					sprintf(tar,"#%d",Analyser::nesting_table::ostack_top());
+					printf("(g_spe,%d,-,#%d)\n",3+i,Analyser::nesting_table::nstack_top()->get_global_ptr(name));
+				
+					sprintf(s1,"%d",3+i);
+					sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(name));
 					Analyser::next_list::create_quad("g_spe",s1,"-",tar);
 					
 					Analyser::nesting_table::ostack_top()+=width;
 
 					Analyser::nesting_table::pstack_pop();
 				}
+				string func_name=Analyser::nesting_table::pstack_top().get_str("func_name");
+				Analyser::nesting_table::func_arg_num[func_name]=size-1;
+				
+				Analyser::global_memory::alloc(1);
+				Analyser::symbol_table->var_map[func_name]=Analyser::next_list::get_nextquad();
+				Analyser::nesting_table::ostack_top()+=1;
+				Analyser::nesting_table::pstack_pop();
+
+				cout<<"Enterred procedure "<<func_name<<endl;
 			}
+			
 
 			Analyser::attribute attri;
 			attri.set_value("arg_num",Analyser::nesting_table::pstack_size());
@@ -1010,7 +1356,7 @@ namespace CM_attri_gram_set
 			Analyser::nesting_table::nstack_top()->var_map[Tx]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=1;
 
-			printf("(%s,#%d,#%d,#%d)\n",r_part[1].get_str("type"),r_part[0].get_int("global_ptr"),r_part[2].get_int("global_ptr"),Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
+			printf("(%s,#%d,#%d,#%d)\n",r_part[1].get_str("type").c_str(),r_part[0].get_int("global_ptr"),r_part[2].get_int("global_ptr"),Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
 			
 			
 			char op[100];
@@ -1247,7 +1593,7 @@ namespace CM_attri_gram_set
 			Analyser::attribute attri;
 			attri.set_value("nextlist",(int)((Analyser::next_list*)(r_part[3].get_int("falselist"))));
 
-			printf("(j,-,-,%d)",r_part[1].get_int("quad"));
+			printf("(j,-,-,%d)\n",r_part[1].get_int("quad"));
 			char tar[100];
 			sprintf(tar,"%d",r_part[1].get_int("quad"));
 			Analyser::next_list::create_quad("j","-","-",tar);
@@ -1275,210 +1621,14 @@ namespace CM_attri_gram_set
 }
 
 
-class CM_LR_analyser:public Analyser::LR_analyser
-{
-public:
-	void conflict_management(const list<Analyser::ex_element>& elem_stream,const list<Analyser::ex_element>::const_iterator& ptr,LR1PG::action& act)override
-	{
-			//add conflict management meotheds here
-			if((LR_stack.top().state_index==8)&&(ptr->toString()=="ID"))
-			{
-			//Conflicts at (I8,ID):r7 vs. r9
-				list<Analyser::ex_element>::const_iterator it=ptr;
-				it++;
-				
-				if((it!=elem_stream.end())&&((it->toString())=="("))
-					act.index=9;
-				else
-					act.index=7;
-			}
-			if(LR_stack.top().state_index==307 && (ptr->toString()=="else"))
-			{
-			//Conflicts at (I307,else):r32 vs. r35
-				act.type=LR1PG::action_type::reduction;
-				act.index=35;
-			}
-	}
-}CM_analyser;
-
-void f(int param)
-{
-	int f=0;
-}
-
 void main()
 {
 	
 	//to get var_list, ter_list, produc_set and set_C in LR1PG
 	//and var_list, ter_list, production_set in LR_analyser
 	CM_analyser.load_productions(string("M_wenfa.txt"));
-
-	for(int i=0;i<LR1PG::produc_set.size();i++)
-	{
-		LR1PG::produc_set[i];
-		
-		Analyser::ex_production produc(LR1PG::produc_set[i]);
-		Analyser::ex_produc_set.push_back(produc);
-	}
-	{
-
-		Analyser::ex_production::add_gram(&CM_attri_gram_set::ag3,3);
-		Analyser::ex_produc_set[3].set_gram(3);
-
-		Analyser::ex_production::add_gram(&CM_attri_gram_set::ag4,4);
-		Analyser::ex_produc_set[4].set_gram(4);
-		
-		Analyser::ex_production::add_gram(&CM_attri_gram_set::ag5,5);
-		Analyser::ex_produc_set[5].set_gram(5);
-		
-		Analyser::ex_production::add_gram(&CM_attri_gram_set::ag6,6);
-		Analyser::ex_produc_set[6].set_gram(6);
-
-		Analyser::ex_production::add_gram(&CM_attri_gram_set::ag8,8);
-		Analyser::ex_produc_set[8].set_gram(8);
-		
-		Analyser::ex_production::add_gram(&CM_attri_gram_set::ag11,11);
-		Analyser::ex_produc_set[11].set_gram(11);
-
-		Analyser::ex_production::add_gram(&CM_attri_gram_set::ag16,16);
-		Analyser::ex_produc_set[16].set_gram(16);
-
-		Analyser::ex_production::add_gram(&CM_attri_gram_set::ag17,17);
-		Analyser::ex_produc_set[17].set_gram(17);
-
-		Analyser::ex_production::add_gram(&CM_attri_gram_set::ag18,18);
-		Analyser::ex_produc_set[18].set_gram(18);
-
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag19),19);
-		Analyser::ex_produc_set[19].set_gram(19);
-		
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag20),20);
-		Analyser::ex_produc_set[20].set_gram(20);
-		
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag21),21);
-		Analyser::ex_produc_set[21].set_gram(21);
-
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag22),22);
-		Analyser::ex_produc_set[22].set_gram(22);
-
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag23),23);
-		Analyser::ex_produc_set[23].set_gram(23);
-
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag24),24);
-		Analyser::ex_produc_set[24].set_gram(24);
-		
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag25),25);
-		Analyser::ex_produc_set[25].set_gram(25);
-		
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag26),26);
-		Analyser::ex_produc_set[26].set_gram(26);
-		
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag27),27);
-		Analyser::ex_produc_set[27].set_gram(27);
-		
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag28),28);
-		Analyser::ex_produc_set[28].set_gram(28);
-
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag29),29);
-		Analyser::ex_produc_set[29].set_gram(29);
-
-
-		
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag32),32);
-		Analyser::ex_produc_set[32].set_gram(32);
-		
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag33),33);
-		Analyser::ex_produc_set[33].set_gram(33);
-		
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag34),34);
-		Analyser::ex_produc_set[34].set_gram(34);
-		
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag35),35);
-		Analyser::ex_produc_set[35].set_gram(35);
-		
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag36),36);
-		Analyser::ex_produc_set[36].set_gram(36);
-
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag37),37);
-		Analyser::ex_produc_set[37].set_gram(37);
-
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag38),38);
-		Analyser::ex_produc_set[38].set_gram(38);
-		
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag39),39);
-		Analyser::ex_produc_set[39].set_gram(39);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag40),40);
-		Analyser::ex_produc_set[40].set_gram(40);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag41),41);
-		Analyser::ex_produc_set[41].set_gram(41);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag42),42);
-		Analyser::ex_produc_set[42].set_gram(42);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag43),43);
-		Analyser::ex_produc_set[43].set_gram(43);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag44),44);
-		Analyser::ex_produc_set[44].set_gram(44);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag45),45);
-		Analyser::ex_produc_set[45].set_gram(45);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag46),46);
-		Analyser::ex_produc_set[46].set_gram(46);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag47),47);
-		Analyser::ex_produc_set[47].set_gram(47);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag48),48);
-		Analyser::ex_produc_set[48].set_gram(48);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag49),49);
-		Analyser::ex_produc_set[49].set_gram(49);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag50),50);
-		Analyser::ex_produc_set[50].set_gram(50);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag51),51);
-		Analyser::ex_produc_set[51].set_gram(51);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag52),52);
-		Analyser::ex_produc_set[52].set_gram(52);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag53),53);
-		Analyser::ex_produc_set[53].set_gram(53);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag54),54);
-		Analyser::ex_produc_set[54].set_gram(54);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag55),55);
-		Analyser::ex_produc_set[55].set_gram(55);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag56),56);
-		Analyser::ex_produc_set[56].set_gram(56);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag57),57);
-		Analyser::ex_produc_set[57].set_gram(57);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag58),58);
-		Analyser::ex_produc_set[58].set_gram(58);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag59),59);
-		Analyser::ex_produc_set[59].set_gram(59);
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag60),60);
-		Analyser::ex_produc_set[60].set_gram(60);
-
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag61),61);
-		Analyser::ex_produc_set[61].set_gram(61);
-
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag62),62);
-		Analyser::ex_produc_set[62].set_gram(62);
-
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag63),63);
-		Analyser::ex_produc_set[63].set_gram(63);
-
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag63),63);
-		Analyser::ex_produc_set[63].set_gram(63);
-
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag64),64);
-		Analyser::ex_produc_set[64].set_gram(64);
-
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag65),65);
-		Analyser::ex_produc_set[65].set_gram(65);
-
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag66),66);
-		Analyser::ex_produc_set[66].set_gram(66);
-
-		Analyser::ex_production::add_gram(&(CM_attri_gram_set::ag67),67);
-		Analyser::ex_produc_set[67].set_gram(67);
-
-		
-		
-		
-
-	}
+	CM_analyser.load_ags();
+	
 
 
 	//to get token_stream:
