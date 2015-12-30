@@ -552,7 +552,7 @@ namespace CM_attri_gram_set
 			
 			printf("(=,%d,-,#%d)\n",Analyser::next_list::get_nextquad()+1,Analyser::symbol_table->var_map["#return_addr_reg"]);
 			sprintf(s1,"%d",Analyser::next_list::get_nextquad()+1);
-			sprintf(tar,"%d",Analyser::symbol_table->var_map["#return_addr_reg"]);
+			sprintf(tar,"#%d",Analyser::symbol_table->var_map["#return_addr_reg"]);
 			Analyser::next_list::create_quad("=",s1,"-",tar);
 
 
@@ -634,7 +634,7 @@ namespace CM_attri_gram_set
 			printf("(-,#%d,1,#%d)\n",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx),Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
 			sprintf(s1,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
 			sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
-			Analyser::next_list::create_quad("-",s1,"-",tar);
+			Analyser::next_list::create_quad("-",s1,"1",tar);
 
 			printf("(s_top,#%d,-,-)\n",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
 			sprintf(s1,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
@@ -941,7 +941,7 @@ namespace CM_attri_gram_set
 				printf("(+,#%d,1,#%d)\n",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx),Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
 				sprintf(s1,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
 				sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
-				Analyser::next_list::create_quad("+",s1,"-",tar);
+				Analyser::next_list::create_quad("+",s1,"1",tar);
 			
 				printf("(s_sp,#%d,-,-)\n",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
 				sprintf(s1,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
@@ -950,13 +950,13 @@ namespace CM_attri_gram_set
 			
 				printf("(s_spe,#%d,-,1)\n",Analyser::symbol_table->var_map["#return_addr_reg"]);
 				sprintf(s1,"%d",Analyser::symbol_table->var_map["#return_addr_reg"]);
-				Analyser::next_list::create_quad("s_spe",s1,"-","-");
+				Analyser::next_list::create_quad("s_spe",s1,"-","1");
 			
 				printf("(+,#%d,%d,#%d)\n",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx),size-1+3,Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
 				sprintf(s1,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
-				sprintf(s1,"%d",size-1+3);
+				sprintf(s2,"%d",size-1+3);
 				sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
-				Analyser::next_list::create_quad("+",s1,"-",tar);
+				Analyser::next_list::create_quad("+",s1,s2,tar);
 			
 				printf("(s_top,#%d,-,-)\n",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
 				sprintf(s1,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
