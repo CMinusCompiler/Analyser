@@ -2,7 +2,7 @@
 #include <sstream>
 namespace Analyser
 {
-	stack<LR1PG::action> act_stack;
+	
 
 
 	int next_list::get_nextquad()
@@ -29,6 +29,7 @@ namespace Analyser
 
 	void next_list::clean_ntar_j()
 	{
+		/*
 		vector<quad_expression>::iterator it=quad_expres.begin();
 		for(;it<quad_expres.end();)
 		{
@@ -37,15 +38,41 @@ namespace Analyser
 			else
 				it++;
 		}
+		*/
+
+		for(int i=0;i<quad_expres.size();)
+		{
+			if((('j'==(quad_expres[i].get(0))[0]))&&((string("-")==(quad_expres[i].get(3)))))
+				next_list::delete_quad(i);
+			else
+				i++;
 		
+		}
 	
 	}
-	
+	void next_list::print_quads(const string& file_name)
+	{
+		FILE* fp;
+		fp=fopen(file_name.c_str(),"w");
+		if(fp)
+		{
+			for(int i=0;i<quad_expres.size();i++)
+				fprintf(fp,"%s\n",quad_expres[i].toString().c_str());
+		}
+		else
+			cout<<"cannot open "<<file_name<<endl;
+		fclose(fp);
+	}
+
+
 	void next_list::quad_expression::set(int i,const string& s)
 	{
 		this->dim[i]=s;
 	}
-
+	void next_list::quad_expression::set_instr_addr(int i)
+	{
+		instr_addr=i;
+	}
 	vector<next_list::quad_expression> next_list::quad_expres;
 
 	void next_list::create_quad(const char* op,const char* s1,const char* s2,const char* tar)
@@ -53,9 +80,49 @@ namespace Analyser
 		quad_expres.push_back(quad_expression(op,s1,s2,tar));
 	}
 
+	void next_list::delete_quad(int instr_addr)
+	{
+		for(int i=0;i<instr_addr;i++)
+		{
+			string dim_str=quad_expres[i].get(3);
+			if(dim_str!=string("-")&&dim_str!=string("-1"));
+			{
+				int tar=atoi(dim_str.c_str());
+				
+				if(tar<=instr_addr)
+					continue;
+				string tar_str;
 
+				stringstream ss;
+				ss<<tar-1;
+				ss>>tar_str;
+				quad_expres[i].set(3,tar_str);
+			}
+		}
 
-	void next_list::back_patch(next_list* pnq,int tar_addr)
+		for(int i=instr_addr+1;i<quad_expres.size();i++)
+		{
+			quad_expres[i].set_instr_addr(i-1);
+			string dim_str=quad_expres[i].get(3);
+			if(dim_str!=string("-")&&dim_str!=string("-1"));
+			{
+				int tar=atoi(dim_str.c_str());
+				
+				if(tar<instr_addr)
+					continue;
+				string tar_str;
+
+				stringstream ss;
+				ss<<tar-1;
+				ss>>tar_str;
+				quad_expres[i].set(3,tar_str);
+			}
+		}
+		quad_expres.erase(quad_expres.begin()+instr_addr);
+		program_counter-=1;
+	}
+
+	void next_list::back_patch(next_list* pnq,int tar_addr,bool is_code_reduc)
 	{
 		next_list* p=pnq;
 		while(p)
@@ -66,6 +133,12 @@ namespace Analyser
 			ss>>addr;
 			if(p->instr_addr>0)
 				quad_expres[p->instr_addr].set(3,addr);
+			else
+			{
+				if(is_code_reduc)
+					delete_quad(p->instr_addr);
+			}
+
 			p=p->post;
 			
 		}
@@ -115,7 +188,45 @@ namespace Analyser
 	
 	APT_node& APT::root=APT_node();
 	stack<APT_node> APT::constru_stack;
+	stack<LR1PG::action> APT::act_stack;
+	void APT::astack_push(const LR1PG::action& act)
+	{
+		act_stack.push(act);
+		
+	}
+	bool APT::astack_empty()
+	{
+		return act_stack.empty();
+	}
+	void APT::astack_pop()
+	{
+		act_stack.pop();
+	}
+	LR1PG::action& APT::astack_top()
+	{
+		return act_stack.top();
+	}
 
+
+	void APT::print(const string& file_name)
+	{
+	//DFS print
+		
+		FILE* fp;
+		fp=fopen(file_name.c_str(),"w");
+		while(!Analyser::APT::astack_empty())
+		{
+		
+			cout<<Analyser::APT::astack_top().toString()<<" : "<<LR1PG::produc_set[Analyser::APT::astack_top().index].toString()<<endl;
+			string str;
+			str=Analyser::APT::astack_top().toString()+" : "+LR1PG::produc_set[Analyser::APT::astack_top().index].toString()+"\n";
+			fputs(str.c_str(),fp);
+			Analyser::APT::astack_pop();
+		}
+		fclose(fp);
+	
+	
+	}
 	
 	void ex_element::set_attri(const attribute& attri)
 	{
@@ -214,7 +325,7 @@ namespace Analyser
 	stack<attribute> nesting_table::param_stack;
 	map<string,int> nesting_table::func_arg_num;
 
-	vector<int> global_memory::mem;
+	int global_memory::size=0;
 	int global_memory::ptr=0;
 	int global_memory::get_ptr()
 	{
@@ -222,14 +333,16 @@ namespace Analyser
 	}
 	void global_memory::alloc(int num)
 	{
-		for(int i=0;i<num;i++)
-			mem.push_back(int());
-		ptr=mem.size();
+		size+=num;
+		ptr=size;
 	}
-	int& global_memory::at(int pos)
+
+	void global_memory::release(int num)
 	{
-		return mem[pos];
+		size-=num;
+		ptr=size;
 	}
+
 	
 	int Tx_allocator::index=0;
 	string Tx_allocator::generate_str()
@@ -350,7 +463,9 @@ namespace Analyser
 	}
 	attribute LR_analyser::reduction(int produc_index,APT_node& father)
 	{
-		act_stack.push(LR1PG::action(LR1PG::action_type::reduction,produc_index));
+		APT::astack_push(LR1PG::action(LR1PG::action_type::reduction,produc_index));
+
+		
 
 		vector<Analyser::ex_element> ex_elem_container;
 		
@@ -402,6 +517,7 @@ namespace Analyser
 	}
 	void LR_analyser::analyse(const list<Analyser::ex_element>& ex_e_stream)
 	{
+		
 
 		list<Analyser::ex_element> elem_stream=ex_e_stream;
 		
@@ -457,7 +573,7 @@ namespace Analyser
 
 					//$$
 					if(act.index==55)
-						cout<<55<<endl;
+						cout<<62<<endl;
 					//$$
 
 					Analyser::attribute l_part_attri=reduction(act.index,father_node);
@@ -490,7 +606,7 @@ namespace Analyser
 				}
 			case LR1PG::action_type::error:
 				{
-					cout<<"Error."<<endl;
+					cout<<"Error at"<<ptr->toString()<<endl;
 					loop_swch=true;
 					break;
 				}

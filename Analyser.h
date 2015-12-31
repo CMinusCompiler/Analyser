@@ -15,10 +15,13 @@ namespace Analyser
 		
 		static int null_addr;
 		static void create_quad(const char* op,const char* s1,const char* s2,const char* tar);
-		static void back_patch(next_list* pnq,int tar_addr);
+		static void back_patch(next_list* pnq,int tar_addr,bool is_code_reduc=false);
+		static void delete_quad(int instr_addr);
+
 		static next_list* merge(next_list* a,next_list* b);
 		static int get_nextquad();
 		static void clean_ntar_j();
+		static void print_quads(const string& file_name);
 		next_list(int instr_addr)
 		{
 			this->instr_addr=instr_addr;
@@ -69,7 +72,7 @@ namespace Analyser
 			void set(int i,const string& s);
 			string get(int i);
 			string toString();
-
+			void set_instr_addr(int i);
 
 		};
 		
@@ -158,7 +161,14 @@ namespace Analyser
 	public:
 		static APT_node& root;
 		static stack<APT_node> constru_stack;
-		static void print();
+		static void print(const string& file_name);
+		static void astack_push(const LR1PG::action& act);
+		static bool astack_empty();
+		static void astack_pop();
+		static LR1PG::action& astack_top();
+	protected:
+		static stack<LR1PG::action> act_stack;
+
 	};
 	
 	
@@ -213,12 +223,13 @@ namespace Analyser
 	{
 	private:
 		//record static variables and temperary variables
-		static vector<int> mem;
+		static int size;
 		static int ptr;
 	public:
 		static int get_ptr();
 		static void alloc(int num);
-		static int& at(int pos);
+		static void release(int num);
+		
 	};
 
 
@@ -332,7 +343,11 @@ namespace Analyser
 		void load_table(const string& file_name);
 		void analyse(const list<Analyser::ex_element>& ex_e_stream);
 		list<Analyser::ex_element>::const_iterator& get_ptr();
+
+		
+		//bool condi_swch;
 	};
 
-	extern stack<LR1PG::action> act_stack;
+	
+	
 }

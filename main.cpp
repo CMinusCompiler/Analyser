@@ -90,6 +90,8 @@ class CM_LR_analyser:public Analyser::LR_analyser
 public:
 	void conflict_management(const list<Analyser::ex_element>& elem_stream,const list<Analyser::ex_element>::const_iterator& ptr,LR1PG::action& act)override
 	{
+			
+
 			//add conflict management meotheds here
 			if((LR_stack.top().state_index==8)&&(ptr->toString()=="ID"))
 			{
@@ -303,7 +305,7 @@ namespace CM_attri_gram_set
 			int width=r_part[0].get_int("width");
 
 
-			Analyser::global_memory::alloc(width);
+			//Analyser::global_memory::alloc(width);
 			Analyser::nesting_table::nstack_top()->var_map[name]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=width;
 
@@ -364,6 +366,9 @@ namespace CM_attri_gram_set
 		/*ag9: type_func ¡ú int
 		{
 			param_stack.push(("func_name",Analyser::LR_analyser::ptr));
+
+			enter(func_name,addr);
+			enter(1);
 		}*/
 		//in CM, there is not other types except int
 		//the declar_var.type attribute is not used here
@@ -372,6 +377,9 @@ namespace CM_attri_gram_set
 			attri.set_value("func_name",CM_analyser.get_ptr()->get_str("name"));
 			Analyser::nesting_table::pstack_push(attri);
  			
+			Analyser::nesting_table::nstack_top()->var_map[CM_analyser.get_ptr()->get_str("name")]=Analyser::next_list::get_nextquad();
+			Analyser::nesting_table::ostack_top()+=1;
+			
 			//it does not need to return attribute
 			return Analyser::attribute();
 		}
@@ -381,6 +389,9 @@ namespace CM_attri_gram_set
 		/*ag10: type_func ¡ú void
 		{
 			param_stack.push(("func_name",Analyser::LR_analyser::ptr+1));
+
+			enter(func_name,addr);
+			enter(1);
 		}*/
 		//in CM, there is not other types except int
 		//the declar_var.type attribute is not used here
@@ -389,6 +400,9 @@ namespace CM_attri_gram_set
 			attri.set_value("func_name",CM_analyser.get_ptr()->get_str("name"));
 			Analyser::nesting_table::pstack_push(attri);
  			
+			Analyser::nesting_table::nstack_top()->var_map[CM_analyser.get_ptr()->get_str("name")]=Analyser::next_list::get_nextquad();
+			Analyser::nesting_table::ostack_top()+=1;
+
 			//it does not need to return attribute
 			return Analyser::attribute();
 		}
@@ -531,7 +545,7 @@ namespace CM_attri_gram_set
 			}
 
 
-			Analyser::global_memory::alloc(1);
+			//Analyser::global_memory::alloc(1);
 			string Tx=Analyser::Tx_allocator::generate_str();
 			Analyser::nesting_table::nstack_top()->var_map[Tx]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=1;
@@ -616,12 +630,12 @@ namespace CM_attri_gram_set
 
 
 
-			Analyser::global_memory::alloc(1);
+			//Analyser::global_memory::alloc(1);
 			string Tx=Analyser::Tx_allocator::generate_str();
 			Analyser::nesting_table::nstack_top()->var_map[Tx]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=1;
 			
-			Analyser::global_memory::alloc(1);
+			//Analyser::global_memory::alloc(1);
 			string Tx1=Analyser::Tx_allocator::generate_str();
 			Analyser::nesting_table::nstack_top()->var_map[Tx1]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=1;
@@ -692,12 +706,12 @@ namespace CM_attri_gram_set
 			char s2[100];
 			char tar[100];
 
-			Analyser::global_memory::alloc(1);
+			//Analyser::global_memory::alloc(1);
 			string Tx=Analyser::Tx_allocator::generate_str();
 			Analyser::nesting_table::nstack_top()->var_map[Tx]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=1;
 			
-			Analyser::global_memory::alloc(1);
+			//Analyser::global_memory::alloc(1);
 			string Tx1=Analyser::Tx_allocator::generate_str();
 			Analyser::nesting_table::nstack_top()->var_map[Tx1]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=1;
@@ -830,7 +844,7 @@ namespace CM_attri_gram_set
 		}*/
 
 			Analyser::nesting_table* pt=Analyser::nesting_table::nstack_top();
-			Analyser::global_memory::alloc(Analyser::nesting_table::ostack_top());
+			//Analyser::global_memory::alloc(Analyser::nesting_table::ostack_top());
 			Analyser::nesting_table::nstack_pop();
 			Analyser::nesting_table::ostack_pop();
 			
@@ -898,13 +912,9 @@ namespace CM_attri_gram_set
 					
 					param_stack.pop();
 				}
-				func_name=nesting_table::pstack_top().get_str("func_name");
 				func_arg_num[func_name]=size-1;
 
-				symbol_table->var_map[func_name]=get_next_addr();
-				offset=offset+declar_func.width;
-				enter(nesting_table::nstack_top(),declar_func.name,nesting_table::ostack_top());
-				nesting_table::ostack_top()+=1;
+				
 			}
 			
 
@@ -924,7 +934,7 @@ namespace CM_attri_gram_set
 				int size=Analyser::nesting_table::pstack_size();
 
 				//below are quads for stack pushing just after enterring this procedure
-				Analyser::global_memory::alloc(1);
+				//Analyser::global_memory::alloc(1);
 				string Tx=Analyser::Tx_allocator::generate_str();
 				Analyser::nesting_table::nstack_top()->var_map[Tx]=Analyser::nesting_table::ostack_top();
 				Analyser::nesting_table::ostack_top()+=1;
@@ -933,7 +943,7 @@ namespace CM_attri_gram_set
 				sprintf(tar,"#%d",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx));
 				Analyser::next_list::create_quad("g_top","-","-",tar);
 			
-				Analyser::global_memory::alloc(1);
+				//Analyser::global_memory::alloc(1);
 				string Tx1=Analyser::Tx_allocator::generate_str();
 				Analyser::nesting_table::nstack_top()->var_map[Tx1]=Analyser::nesting_table::ostack_top();
 				Analyser::nesting_table::ostack_top()+=1;
@@ -949,7 +959,7 @@ namespace CM_attri_gram_set
 			
 			
 				printf("(s_spe,#%d,-,1)\n",Analyser::symbol_table->var_map["#return_addr_reg"]);
-				sprintf(s1,"%d",Analyser::symbol_table->var_map["#return_addr_reg"]);
+				sprintf(s1,"#%d",Analyser::symbol_table->var_map["#return_addr_reg"]);
 				Analyser::next_list::create_quad("s_spe",s1,"-","1");
 			
 				printf("(+,#%d,%d,#%d)\n",Analyser::nesting_table::nstack_top()->get_global_ptr(Tx),size-1+3,Analyser::nesting_table::nstack_top()->get_global_ptr(Tx1));
@@ -968,7 +978,7 @@ namespace CM_attri_gram_set
 					string name=Analyser::nesting_table::pstack_top().get_str("name");
 					int width=Analyser::nesting_table::pstack_top().get_int("width");
 
-					Analyser::global_memory::alloc(width);
+					//Analyser::global_memory::alloc(width);
 					Analyser::nesting_table::nstack_top()->var_map[name]=Analyser::nesting_table::ostack_top();
 					
 					printf("(g_spe,%d,-,#%d)\n",3+i,Analyser::nesting_table::nstack_top()->get_global_ptr(name));
@@ -984,9 +994,10 @@ namespace CM_attri_gram_set
 				string func_name=Analyser::nesting_table::pstack_top().get_str("func_name");
 				Analyser::nesting_table::func_arg_num[func_name]=size-1;
 				
-				Analyser::global_memory::alloc(1);
-				Analyser::symbol_table->var_map[func_name]=Analyser::next_list::get_nextquad();
-				Analyser::nesting_table::ostack_top()+=1;
+				//Analyser::global_memory::alloc(1);
+				//Analyser::symbol_table->var_map[func_name]=Analyser::next_list::get_nextquad();
+				//Analyser::symbol_table->ostack_top()+=1;
+
 				Analyser::nesting_table::pstack_pop();
 
 				cout<<"Enterred procedure "<<func_name<<endl;
@@ -1012,7 +1023,7 @@ namespace CM_attri_gram_set
 			string name=r_part[1].get_str("name");
 			int width=r_part[1].get_int("width");
 
-			Analyser::global_memory::alloc(width);
+			//Analyser::global_memory::alloc(width);
 			Analyser::nesting_table::nstack_top()->var_map[name]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=width;
 			
@@ -1144,7 +1155,7 @@ namespace CM_attri_gram_set
 		}*/
 			
 			
-			Analyser::global_memory::alloc(1);
+			//Analyser::global_memory::alloc(1);
 			string Tx=Analyser::Tx_allocator::generate_str();
 			Analyser::nesting_table::nstack_top()->var_map[Tx]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=1;
@@ -1180,12 +1191,10 @@ namespace CM_attri_gram_set
 			emit(j,-,-,-);
 			
 		}*/
-			printf("(=,#%d,-,#%d)\n",r_part[2].get_int(string("global_ptr")),r_part[0].get_int(string("global_ptr")));
-
-			
 			char s1[100];
 			char s2[100];
 			char tar[100];
+			printf("(=,#%d,-,#%d)\n",r_part[2].get_int(string("global_ptr")),r_part[0].get_int(string("global_ptr")));
 			sprintf(s1,"#%d",r_part[2].get_int(string("global_ptr")));
 			sprintf(tar,"#%d",r_part[0].get_int(string("global_ptr")));
 			Analyser::next_list::create_quad("=",s1,"-",tar);
@@ -1193,6 +1202,8 @@ namespace CM_attri_gram_set
 			Analyser::attribute attri;
 			attri.set_value("global_ptr",r_part[0].get_int(string("global_ptr")));
 
+		
+			
 			attri.set_value("truelist",(int)(new Analyser::next_list(Analyser::next_list::get_nextquad())));
 			attri.set_value("falselist",(int)(new Analyser::next_list(Analyser::next_list::get_nextquad()+1)));
 			
@@ -1221,7 +1232,7 @@ namespace CM_attri_gram_set
 			nesting_table::nstack_top().var_map["#Tx"]=nesting_table::ostack_top();
 			var.global_ptr=#Tx.global_ptr;
 		}*/
-			Analyser::global_memory::alloc(1);
+			//Analyser::global_memory::alloc(1);
 			string Tx=Analyser::Tx_allocator::generate_str();
 			Analyser::nesting_table::nstack_top()->var_map[Tx]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=1;
@@ -1318,7 +1329,7 @@ namespace CM_attri_gram_set
 			Analyser::attribute attri;
 			attri.set_value(string("global_ptr"),r_part[0].get_int(string("global_ptr")));
 			
-
+			
 			Analyser::next_list* p1=new Analyser::next_list(Analyser::next_list::get_nextquad());
 			Analyser::next_list* p2=new Analyser::next_list(Analyser::next_list::get_nextquad()+1);
 
@@ -1351,7 +1362,7 @@ namespace CM_attri_gram_set
 		}*/
 			
 			
-			Analyser::global_memory::alloc(1);
+			//Analyser::global_memory::alloc(1);
 			string Tx=Analyser::Tx_allocator::generate_str();
 			Analyser::nesting_table::nstack_top()->var_map[Tx]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=1;
@@ -1388,7 +1399,7 @@ namespace CM_attri_gram_set
 		}*/
 			
 			
-			Analyser::global_memory::alloc(1);
+			//Analyser::global_memory::alloc(1);
 			string Tx=Analyser::Tx_allocator::generate_str();
 			Analyser::nesting_table::nstack_top()->var_map[Tx]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=1;
@@ -1421,7 +1432,7 @@ namespace CM_attri_gram_set
 			emit(=,NUM.val,-,Tx);
 			factor.global_ptr=nesting_table::nstack_top().get_global_ptr(Tx);
 		}*/
-			Analyser::global_memory::alloc(1);
+			//Analyser::global_memory::alloc(1);
 			string Tx=Analyser::Tx_allocator::generate_str();
 			Analyser::nesting_table::nstack_top()->var_map[Tx]=Analyser::nesting_table::ostack_top();
 			Analyser::nesting_table::ostack_top()+=1;
@@ -1484,7 +1495,7 @@ namespace CM_attri_gram_set
 			Analyser::next_list* p=(Analyser::next_list*)(r_part[0].get_int("nextlist"));
 			int quad=r_part[1].get_int("quad");
 			Analyser::next_list::back_patch(p,quad);
-
+				
 			Analyser::attribute attri;
 			attri.set_value("nextlist",(int)(r_part[2].get_int("nextlist")));
 			return attri;
@@ -1495,6 +1506,8 @@ namespace CM_attri_gram_set
 		{
 			lines.nextlist=makelist();
 		}*/
+		
+
 			Analyser::attribute attri;
 			//using NULL means it does not need to be backpatched
 			attri.set_value("nextlist",(int)(new Analyser::next_list(Analyser::next_list::null_addr)));
@@ -1506,6 +1519,8 @@ namespace CM_attri_gram_set
 		{
 			lines.nextlist=makelist();
 		}*/
+	
+			
 			Analyser::attribute attri;
 			//using NULL means it does not need to be backpatched
 			attri.set_value("nextlist",(int)(new Analyser::next_list(Analyser::next_list::null_addr)));
@@ -1548,6 +1563,9 @@ namespace CM_attri_gram_set
 			Analyser::next_list* nextlist=(Analyser::next_list*)(r_part[5].get_int("nextlist"));
 			Analyser::attribute attri;
 			attri.set_value("nextlist",(int)(Analyser::next_list::merge(falselist,nextlist)));
+
+		
+				
 			return attri;
 		}
 		Analyser::attribute ag33(const vector<Analyser::ex_element>& r_part)
@@ -1563,7 +1581,7 @@ namespace CM_attri_gram_set
 			Analyser::next_list::back_patch(truelist,r_part[4].get_int("quad"));
 			
 			Analyser::next_list* falselist=(Analyser::next_list*)(r_part[2].get_int("falselist"));
-			Analyser::next_list::back_patch(truelist,r_part[8].get_int("quad"));
+			Analyser::next_list::back_patch(falselist,r_part[8].get_int("quad"));
 			
 			Analyser::next_list* lines_nextlist=(Analyser::next_list*)(r_part[5].get_int("nextlist"));
 			Analyser::next_list* N2_nextlist=(Analyser::next_list*)(r_part[6].get_int("nextlist"));
@@ -1571,6 +1589,9 @@ namespace CM_attri_gram_set
 			Analyser::next_list* temp_ptr= Analyser::next_list::merge(lines_nextlist,N2_nextlist);
 			Analyser::attribute attri;
 			attri.set_value("nextlist",(int)(Analyser::next_list::merge(temp_ptr,lines1_nextlist)));
+
+			
+
 			return attri;
 		}
 		Analyser::attribute ag34(const vector<Analyser::ex_element>& r_part)
@@ -1597,6 +1618,9 @@ namespace CM_attri_gram_set
 			char tar[100];
 			sprintf(tar,"%d",r_part[1].get_int("quad"));
 			Analyser::next_list::create_quad("j","-","-",tar);
+
+			
+
 			return attri;
 		}
 
@@ -1623,7 +1647,6 @@ namespace CM_attri_gram_set
 
 void main()
 {
-	
 	//to get var_list, ter_list, produc_set and set_C in LR1PG
 	//and var_list, ter_list, production_set in LR_analyser
 	CM_analyser.load_productions(string("M_wenfa.txt"));
@@ -1648,22 +1671,13 @@ void main()
 	
 	CM_analyser.load_table(string("M_TABLE.txt"));
 	CM_analyser.analyse(ex_elem_stream);
-
+	
+	
 	Analyser::next_list::clean_ntar_j();
+	Analyser::next_list::print_quads("quads.txt");
 
-	/*
-	FILE* fp;
-	fp=fopen("act_list.txt","w");
-	while(!Analyser::act_stack.empty())
-	{
-		
-		cout<<Analyser::act_stack.top().toString()<<" : "<<LR1PG::produc_set[Analyser::act_stack.top().index].toString()<<endl;
-		string str;
-		str=Analyser::act_stack.top().toString()+" : "+LR1PG::produc_set[Analyser::act_stack.top().index].toString()+"\n";
-		fputs(str.c_str(),fp);
-		Analyser::act_stack.pop();
-	}
-	fclose(fp);
-	*/
+	Analyser::APT::print(string("DFS_APT.txt"));
 	system("pause");
 }
+
+
