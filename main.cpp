@@ -1655,7 +1655,8 @@ void main()
 
 
 	//to get token_stream:
-	Lexer::load_code(string("if.cpp"));
+	//Lexer::load_code(string("if.cpp"));
+	Lexer::load_code(string("while.cpp"));
 	
 	//token_stream to elem_stream:
 	list<Analyser::ex_element> ex_elem_stream;
