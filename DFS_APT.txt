@@ -1,0 +1,88 @@
+r0 : program->declar_list
+r2 : declar_list->declar
+r4 : declar->declar_func
+r8 : declar_func->type_func ID ( params ) compou_body
+r19 : compou_body->{ N1 declar_local code }
+r23 : code->code M lines
+r27 : lines->lines_loop
+r34 : lines_loop->while M ( expre ) M lines
+r29 : lines->compou_body
+r19 : compou_body->{ N1 declar_local code }
+r23 : code->code M lines
+r25 : lines->lines_asg
+r30 : lines_asg->expre ;
+r39 : expre->var = expre
+r40 : expre->expre_rel
+r44 : expre_rel->expre_arith
+r51 : expre_arith->expre_arith op_add term
+r56 : term->factor
+r60 : factor->var
+r41 : var->ID
+r53 : op_add->+
+r52 : expre_arith->term
+r56 : term->factor
+r60 : factor->var
+r41 : var->ID
+r41 : var->ID
+r36 : M->¦Å
+r23 : code->code M lines
+r25 : lines->lines_asg
+r30 : lines_asg->expre ;
+r39 : expre->var = expre
+r40 : expre->expre_rel
+r44 : expre_rel->expre_arith
+r51 : expre_arith->expre_arith op_add term
+r56 : term->factor
+r62 : factor->NUM
+r53 : op_add->+
+r52 : expre_arith->term
+r56 : term->factor
+r60 : factor->var
+r41 : var->ID
+r41 : var->ID
+r36 : M->¦Å
+r24 : code->¦Å
+r22 : declar_local->¦Å
+r20 : N1->¦Å
+r36 : M->¦Å
+r40 : expre->expre_rel
+r44 : expre_rel->expre_arith
+r52 : expre_arith->term
+r56 : term->factor
+r60 : factor->var
+r41 : var->ID
+r36 : M->¦Å
+r36 : M->¦Å
+r23 : code->code M lines
+r25 : lines->lines_asg
+r30 : lines_asg->expre ;
+r39 : expre->var = expre
+r40 : expre->expre_rel
+r44 : expre_rel->expre_arith
+r52 : expre_arith->term
+r56 : term->factor
+r62 : factor->NUM
+r41 : var->ID
+r36 : M->¦Å
+r23 : code->code M lines
+r25 : lines->lines_asg
+r30 : lines_asg->expre ;
+r39 : expre->var = expre
+r40 : expre->expre_rel
+r44 : expre_rel->expre_arith
+r52 : expre_arith->term
+r56 : term->factor
+r62 : factor->NUM
+r41 : var->ID
+r36 : M->¦Å
+r24 : code->¦Å
+r21 : declar_local->declar_local declar_var
+r5 : declar_var->type_var ID ;
+r7 : type_var->int
+r21 : declar_local->declar_local declar_var
+r5 : declar_var->type_var ID ;
+r7 : type_var->int
+r22 : declar_local->¦Å
+r20 : N1->¦Å
+r12 : params->void
+r10 : type_func->void

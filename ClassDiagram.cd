@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CM_LR_analyser">
+    <Position X="0.5" Y="4.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>main.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Lexer::token" Collapsed="true">
+    <Position X="1" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Lexer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LR1PG::element">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAIAAAAAAAAAAAAABAAIAAAAAAAAAAAgCAABAAA=</HashCode>
+      <FileName>LR1PG.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LR1PG::production">
+    <Position X="4" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAgEEAAAAAAAAABAAAAAAAAAAAAAAkAAAAAQA=</HashCode>
+      <FileName>LR1PG.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LR1PG::FIRST">
+    <Position X="15.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAABAAAAAYAAAAAAAAIAAAAAACAAAAQAAAAA=</HashCode>
+      <FileName>LR1PG.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LR1PG::flex_production">
+    <Position X="6" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAQAAAAAAAAAAAAAAABEAAAAAAAAAAAAAgAQAAAAA=</HashCode>
+      <FileName>LR1PG.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LR1PG::LR_item">
+    <Position X="2.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAQAAAABQAAAAAAAAAAAAAgAEAAAAA=</HashCode>
+      <FileName>LR1PG.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LR1PG::LR_item_closure">
+    <Position X="13.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EEQAAAAAAABAQAAgAIAAAAAAAQAAAAAAAAAgAgABQAA=</HashCode>
+      <FileName>LR1PG.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LR1PG::action">
+    <Position X="9.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAABAAAAAABAAAAAAAACAABAAA=</HashCode>
+      <FileName>LR1PG.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LR1PG::LR_analysis_table">
+    <Position X="13.25" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAIABAAAQAAAAAAAAAAAAAgAAAAQABAAA=</HashCode>
+      <FileName>LR1PG.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Analyser::next_list">
+    <Position X="15" Y="3.5" Width="1.5" />
+    <NestedTypes>
+      <Class Name="Analyser::next_list::quad_expression" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Analyser.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>gACAAAAAAAAAAAAACAJBEAAAgAQAAAiAAAEAAABAAAI=</HashCode>
+      <FileName>Analyser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Analyser::attribute">
+    <Position X="3.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAgAAAAACAAAAABAAAAQACAAAAAA=</HashCode>
+      <FileName>Analyser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Analyser::ex_element">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAEAAAAAABAAEAQACAAAAAA=</HashCode>
+      <FileName>Analyser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Analyser::APT_node">
+    <Position X="5.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAIAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Analyser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Analyser::APT">
+    <Position X="11.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAQAAAAFAAAAAAAAAAAgAAAAAgAAAABAAAAAgAAAAAA=</HashCode>
+      <FileName>Analyser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Analyser::ex_production">
+    <Position X="11.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAEAAAEAAAAAAQAAgAAAAAABAAAAAAAAAAACgAUA=</HashCode>
+      <FileName>Analyser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Analyser::global_memory">
+    <Position X="9.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAAAACIAAAAAAAAAAAEAAAAAAAAAAAIA=</HashCode>
+      <FileName>Analyser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Analyser::Tx_allocator">
+    <Position X="17.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAgA=</HashCode>
+      <FileName>Analyser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Analyser::nesting_table">
+    <Position X="8" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAyABBAABAAAAEAYAACAAAAFAgAwCAAiEBEAA=</HashCode>
+      <FileName>Analyser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Analyser::LR_analyser" Collapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAACBAACAACAAAAAAAABAAAAECAAAAgAQIIAcA=</HashCode>
+      <FileName>Analyser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="LR1PG::action_type">
+    <Position X="16.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAACACAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LR1PG.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Analyser::op_tpye" Collapsed="true">
+    <Position X="5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABACAQAAAAAACgQAAAABAAAAAABAIAAAACAAA=</HashCode>
+      <FileName>Analyser.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="微软雅黑" Size="9" />
+</ClassDiagram>
